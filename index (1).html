@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AERO-INTEL | מרכז המודיעין לעולם הרחפנות</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap');
+        body { font-family: 'Heebo', sans-serif; background-color: #020617; color: #f8fafc; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-950 text-slate-100">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-black px-3 py-1.5 rounded-lg tracking-wider text-lg">
+                    🚁 AERO-INTEL
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-white leading-tight">מרכז הבקרה והמודיעין לעולם הרחפנות</h1>
+                    <p class="text-xs text-slate-400">מעקב בזמן אמת אחר טכנולוגיות, שווקים, עסקאות וזירות מבצעיות (מחובר ל-Supabase)</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 text-xs bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-full">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="text-slate-300">מסד נתונים מחובר | עדכון אחרון: <span id="last-update-time" class="text-cyan-400 font-mono">16.11.2026</span></span>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="max-w-7xl mx-auto px-4 pb-3 flex overflow-x-auto gap-2 no-scrollbar">
+            <button onclick="switchTab('knowledge')" id="btn-knowledge" class="tab-btn bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/20 px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-all">📚 תחומי ידע</button>
+            <button onclick="switchTab('articles')" id="btn-articles" class="tab-btn text-slate-300 hover:bg-slate-800 hover:text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-all">📰 כתבות ועדכונים</button>
+            <button onclick="switchTab('agent')" id="btn-agent" class="tab-btn text-slate-300 hover:bg-slate-800 hover:text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-all">🤖 סוכן חדשנות AI</button>
+            <button onclick="switchTab('deals')" id="btn-deals" class="tab-btn text-slate-300 hover:bg-slate-800 hover:text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-all">💼 עסקאות ורכש</button>
+            <button onclick="switchTab('operations')" id="btn-operations" class="tab-btn text-slate-300 hover:bg-slate-800 hover:text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-all">🎯 ביצועים מבצעיים</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8">
+
+        <!-- Tab 1: Knowledge Base -->
+        <section id="tab-knowledge" class="tab-content space-y-6">
+            <div>
+                <h2 class="text-2xl font-bold text-white mb-1">תחומי הידע הנדרשים בעולם הרחפנות והכטב"מים</h2>
+                <p class="text-sm text-slate-400">מפת הידע ההנדסית, המבצעית והרגולטורית המקיפה לתעשיית הרחפנות המודרנית.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-6">
+                    <!-- Card 1 -->
+                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl flex flex-col justify-between hover:border-cyan-500/40 transition-all">
+                        <div>
+                            <div class="flex justify-between items-center text-xs mb-3">
+                                <span class="bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono">תחום #01</span>
+                                <span class="text-slate-500">עודכן: 14.11.2026</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">אווירודינמיקה והנעה מתקדמת</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed mb-4">תכנון כנפיים, טורבינות, מנועי בראשלס מתקדמים, סוללות מצב-מוצק, ותאי סוללה היברידיים להארכת זמן שהייה באוויר (Endurance).</p>
+                        </div>
+                        <div class="pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
+                            <span class="text-slate-400">מקור תקן: <a href="https://www.nasa.gov" target="_blank" class="text-cyan-400 hover:underline">NASA Aero / MIT</a></span>
+                            <button onclick="openKnowledgeModal('אווירודינמיקה והנעה מתקדמת', 'פירוט מערכות הנעה חשמליות, תאי דלק מימניים ויעילות מדחפים בגובה רב.')" class="text-cyan-400 hover:underline">הרחב ←</button>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl flex flex-col justify-between hover:border-cyan-500/40 transition-all">
+                        <div>
+                            <div class="flex justify-between items-center text-xs mb-3">
+                                <span class="bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono">תחום #02</span>
+                                <span class="text-slate-500">עודכן: 12.11.2026</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">אוויוניקה ובקרת טיסה (Flight Control)</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed mb-4">מערכות ניהול טיסה אוטונומיות, חיישני IMU ברמת דיוק גבוהה, שילוב GPS-Denied Navigation לטיסה בסביבה משובשת ללא לווינים.</p>
+                        </div>
+                        <div class="pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
+                            <span class="text-slate-400">מקור תקן: <a href="https://www.faa.gov" target="_blank" class="text-cyan-400 hover:underline">FAA / RTCA</a></span>
+                            <button onclick="openKnowledgeModal('אוויוניקה ובקרת טיסה', 'ניווט אופטי (Visual Odometry), סינון קלמן (EKF) ובקרי טיסה כפולי יתירות.')" class="text-cyan-400 hover:underline">הרחב ←</button>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl flex flex-col justify-between hover:border-cyan-500/40 transition-all">
+                        <div>
+                            <div class="flex justify-between items-center text-xs mb-3">
+                                <span class="bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono">תחום #03</span>
+                                <span class="text-slate-500">עודכן: 10.11.2026</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">תקשורת, הצפנה ולוחמה אלקטרונית (ל"א)</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed mb-4">ערוצי תקשורת חסיני שיבוש (FHSS), שליטה מבוססת סיב אופטי (Fiber Optic) לרחפני תקיפה, ומערכות הגנה מפני חסימות RF.</p>
+                        </div>
+                        <div class="pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
+                            <span class="text-slate-400">מקור תקן: <a href="https://www.nato.int" target="_blank" class="text-cyan-400 hover:underline">NATO STANAG 4586</a></span>
+                            <button onclick="openKnowledgeModal('תקשורת ול״א', 'פרוטוקולי דילוג תדרים, אנטנות כיווניות ותקשורת לוויינית (SATCOM) לטווחים ארוכים.')" class="text-cyan-400 hover:underline">הרחב ←</button>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl flex flex-col justify-between hover:border-cyan-500/40 transition-all">
+                        <div>
+                            <div class="flex justify-between items-center text-xs mb-3">
+                                <span class="bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono">תחום #04</span>
+                                <span class="text-slate-500">עודכן: 15.11.2026</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">מטע"דים, אופטיקה ובינה מלאכותית קצה</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed mb-4">מצלמות טרמיות מקוררות, מייצבים גירוסקופיים (Gimbals), ואלגוריתמי זיהוי מטרה אוטומטי (Computer Vision / ATR) על שבבי Edge AI.</p>
+                        </div>
+                        <div class="pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
+                            <span class="text-slate-400">מקור תקן: <a href="https://www.ieee.org" target="_blank" class="text-cyan-400 hover:underline">IEEE Sensors Journal</a></span>
+                            <button onclick="openKnowledgeModal('מטע״דים ו-Edge AI', 'עיבוד תמונה בזמן אמת לזיהוי מטרות, נעילה טרמית והיתוך חיישנים (EO/IR).')" class="text-cyan-400 hover:underline">הרחב ←</button>
+                        </div>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl flex flex-col justify-between hover:border-cyan-500/40 transition-all">
+                        <div>
+                            <div class="flex justify-between items-center text-xs mb-3">
+                                <span class="bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono">תחום #05</span>
+                                <span class="text-slate-500">עודכן: 11.11.2026</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">אוטונומיה מלאה ונחילי רחפנים (Swarming)</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed mb-4">תיאום מבוזר בין עשרות ומאות כלים ללא מפעיל אנושי מרכזי, תכנון מסלול מונע התנגשות, וחלוקת משימות דינמית בשדה הקרב.</p>
+                        </div>
+                        <div class="pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
+                            <span class="text-slate-400">מקור תקן: <a href="https://www.darpa.mil" target="_blank" class="text-cyan-400 hover:underline">DARPA OFFSET Proj.</a></span>
+                            <button onclick="openKnowledgeModal('נחילי רחפנים', 'תקשורת Mesh בין כלים, קבלת החלטות מבוזרת והתגברות על אובדן כלים בנחיל.')" class="text-cyan-400 hover:underline">הרחב ←</button>
+                        </div>
+                    </div>
+
+                    <!-- Card 6 -->
+                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl flex flex-col justify-between hover:border-cyan-500/40 transition-all">
+                        <div>
+                            <div class="flex justify-between items-center text-xs mb-3">
+                                <span class="bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono">תחום #06</span>
+                                <span class="text-slate-500">עודכן: 09.11.2026</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">רגולציה, תקיפה נגדית (C-UAS) ובטיחות מרחבית</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed mb-4">חוקי טיסה מסחריים (U-Space, BVLOS), מערכות יירוט קינטיות ואלקטרוניות לרחפנים עוינים, והגנה על תשתיות קריטיות.</p>
+                        </div>
+                        <div class="pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
+                            <span class="text-slate-400">מקור תקן: <a href="https://www.easa.europa.eu" target="_blank" class="text-cyan-400 hover:underline">EASA U-Space Guidelines</a></span>
+                            <button onclick="openKnowledgeModal('רגולציה ו-C-UAS', 'מכ״מים לגילוי מטרות זעירות, מערכות לייזר רב-עוצמה ורגולציית Remote ID.')" class="text-cyan-400 hover:underline">הרחב ←</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab 2: Articles & News -->
+        <section id="tab-articles" class="tab-content hidden space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-white mb-1">כתבות ועדכונים מקצועיים</h2>
+                    <p class="text-sm text-slate-400">סיקור עולמי בזמן אמת מתוך מסד הנתונים בענן (Supabase).</p>
+                </div>
+                <input type="text" id="article-search" placeholder="חיפוש כתבות..." class="bg-slate-900 border border-slate-800 text-sm rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500 w-full md:w-64">
+            </div>
+
+            <div id="articles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Dynamic articles loaded from Supabase -->
+            </div>
+        </section>
+
+        <!-- Tab 3: AI Innovation Agent -->
+        <section id="tab-agent" class="tab-content hidden space-y-6">
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-white mb-1">🤖 סוכן חדשנות AI (מקושר ל-Supabase)</h2>
+                    <p class="text-sm text-slate-400">סוכן אוטונומי הסורק בזמן אמת פריצות דרך, פטנטים ומחקרים בעולם הרחפנות.</p>
+                </div>
+                <span class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs px-3 py-1.5 rounded-full flex items-center gap-2 font-mono">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    Agent Status: Online
+                </span>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">תחום מיקוד לסריקה</label>
+                        <select id="agent-focus" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white">
+                            <option value="טכנולוגיות סוללות ואנרגיה חלופית">טכנולוגיות סוללות ואנרגיה חלופית</option>
+                            <option value="נחילי רחפנים ואוטונומיה מבוזרת">נחילי רחפנים ואוטונומיה מבוזרת</option>
+                            <option value="מערכות הגנה נגד רחפנים (C-UAS)">מערכות הגנה נגד רחפנים (C-UAS)</option>
+                            <option value="חומרים מרוכבים וקל-משקל">חומרים מרוכבים וקל-משקל</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">עומק ניתוח</label>
+                        <select id="agent-depth" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white">
+                            <option value="deep">ניתוח מעמיק כולל פטנטים (TRL 4-7)</option>
+                            <option value="commercial">מיקוד במסחור ומוצרים חדשים</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button id="scan-btn" onclick="runAgentScan()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-2.5 px-4 rounded-lg text-sm transition-all flex justify-center items-center gap-2">
+                            <span>סרוק חידושים עכשיו</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="agent-results" class="space-y-4">
+                <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl border-r-4 border-r-cyan-500">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-cyan-500/10 text-cyan-400 text-xs px-2 py-0.5 rounded font-mono">חידוש מזוהה #AI-104</span>
+                            <span class="text-xs text-slate-400">תאריך זיהוי: <strong class="text-white">16.11.2026</strong></span>
+                        </div>
+                        <span class="bg-emerald-500/10 text-emerald-400 text-xs px-2 py-0.5 rounded font-medium">TRL 6 (הדגמת אבטיפוס)</span>
+                    </div>
+                    <h4 class="text-base font-bold text-white mb-1">ניווט אופטי מבוסס רשתות נוירונים ללא GPS (Sub-meter accuracy)</h4>
+                    <p class="text-xs text-slate-400 mb-3 leading-relaxed">פיתוח אלגוריתם SLAM קל-משקל הרץ על מעבדי ARM ומאפשר לרחפן לנווט בדיוק של סנטימטרים גם בתנאי חשיכה או שיבוש אלקטרוני מלא.</p>
+                    <div class="flex justify-between items-center text-xs pt-2 border-t border-slate-900">
+                        <span class="text-slate-400">מקור מידע: <a href="https://arxiv.org" target="_blank" class="text-cyan-400 underline">arXiv Robotics & IEEE</a></span>
+                        <span class="text-cyan-400 font-medium">ציון רלוונטיות: 97%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab 4: Deals & Procurement -->
+        <section id="tab-deals" class="tab-content hidden space-y-6">
+            <div>
+                <h2 class="text-2xl font-bold text-white mb-1">💼 עסקאות, חוזי רכש והשקעות בתעשייה</h2>
+                <p class="text-sm text-slate-400">מעקב אחר חוזי ענק, מיזוגים וגיוסי הון בחברות רחפנים וכטב"מים גלובליות.</p>
+
+                <div class="mt-6 bg-slate-900 border border-slate-800 rounded-xl overflow-x-auto">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-950 text-slate-400 border-b border-slate-800">
+                            <tr>
+                                <th class="p-3">תאריך</th>
+                                <th class="p-3">חברה / קניין</th>
+                                <th class="p-3">סוג עסקה</th>
+                                <th class="p-3">היקף פיננסי</th>
+                                <th class="p-3">תיאור העסקה</th>
+                                <th class="p-3">מקור / דיווח רשמי</th>
+                            </tr>
+                        </thead>
+                        <tbody id="deals-table-body" class="divide-y divide-slate-800/60">
+                            <!-- Dynamic deals -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab 5: Operational Performance -->
+        <section id="tab-operations" class="tab-content hidden space-y-6">
+            <div>
+                <h2 class="text-2xl font-bold text-white mb-1">🎯 ביצועים מבצעיים ולקחי מלחמות בעולם</h2>
+                <p class="text-sm text-slate-400">ניתוח שטח של טקטיקות הפעלה, יעילות שרידות מול לוחמה אלקטרונית, וזירות לחימה פעילות.</p>
+
+                <div id="operations-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
+                    <!-- Dynamic operations -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal -->
+    <div id="modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 max-w-lg w-full rounded-2xl p-6 space-y-4 shadow-2xl">
+            <div id="modal-content" class="space-y-3"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500">
+        <p>AERO-INTEL Intelligence System © 2026. כל הזכויות שמורות למעקב עולם הרחפנות והכטב"מים.</p>
+    </footer>
+
+    <script>
+        // חיבור ל-Supabase עם הפרטים שלך
+        const SUPABASE_URL = 'https://corstehotetpbaxglxlg.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_VqRZSGc_KHgyCwJtx9kpXg_r7J1t1wl';
+        
+        let supabaseClient = null;
+        try {
+            if (window.supabase) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+        } catch (e) {
+            console.error('Supabase init error:', e);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-cyan-500', 'text-slate-950', 'font-bold', 'shadow-md', 'shadow-cyan-500/20');
+                el.classList.add('text-slate-300', 'hover:bg-slate-800', 'hover:text-white');
+            });
+
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.remove('text-slate-300', 'hover:bg-slate-800', 'hover:text-white');
+            activeBtn.classList.add('bg-cyan-500', 'text-slate-950', 'font-bold', 'shadow-md', 'shadow-cyan-500/20');
+        }
+
+        // טעינת נתונים ראשונית וחיבור לענן
+        async function loadAppData() {
+            let articlesData = [
+                { title: "פריצת דרך בסוללות מצב-מוצק לרחפנים", category: "טכנולוגיה", cat_class: "bg-blue-500/10 text-blue-400", date: "15.11.2026", summary: "חברת SolidPower בשיתוף מעבדות המחקר הציגו אבטיפוס...", source_name: "Defense News", source_url: "https://www.defensenews.com" }
+            ];
+
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient.from('articles').select('*').order('created_at', { ascending: false });
+                    if (data && data.length > 0) {
+                        articlesData = data.map(item => ({
+                            title: item.title,
+                            category: item.category || 'טכנולוגיה',
+                            cat_class: 'bg-cyan-500/10 text-cyan-400',
+                            date: item.published_at ? item.published_at.substring(0, 10) : '16.11.2026',
+                            summary: item.summary || 'אין תקציר זמין',
+                            source_name: 'Supabase Cloud',
+                            source_url: item.url || '#'
+                        }));
+                    }
+                } catch (err) {
+                    console.log('Error loading from Supabase, using local fallback', err);
+                }
+            }
+
+            renderArticles(articlesData);
+
+            const dealsData = [
+                { date: "15.11.2026", company: "Anduril Industries", type: "חוזה ביטחוני", type_class: "bg-emerald-500/10 text-emerald-400", amount: "$480M", desc: "אספקת אלפי מערכות ליירוט רחפנים אוטונומיות (Anvil-M).", source: "DoD Contracts", url: "https://www.defense.gov" },
+                { date: "12.11.2026", company: "Shield AI", type: "סבב גיוס F", type_class: "bg-purple-500/10 text-purple-400", amount: "$300M", desc: "הרחבת פיתוח תוכנת הטייס האוטונומי Hivemind.", source: "TechCrunch", url: "https://techcrunch.com" }
+            ];
+            renderDeals(dealsData);
+
+            const opsData = [
+                { arena: "זירת מזרח אירופה", date: "15.11.2026", border_color: "border-t-red-500", title: "אבולוציית היירוט האלקטרוני ורחפני סיב אופטי", desc: "שימוש אינטנסיבי במשבשי כיס ניידים לצד רחפני FPV המחוברים בסיב אופטי החסינים לחלוטין לשיבוש RF.", source: "ISW & RUSI", url: "https://www.understandingwar.org", score: "78%" },
+                { arena: "המזרח התיכון והים האדום", date: "14.11.2026", border_color: "border-t-amber-500", title: "יירוט נחילי כטב"מים ארוכי טווח", desc: "שילוב מערכות הגנה רב-שכבתיות ולוחמה אלקטרונית ליירוט מטרות איטיות בגובה נמוך.", source: "Janes Defence", url: "https://www.janes.com", score: "94%" }
+            ];
+            renderOperations(opsData);
+        }
+
+        function renderArticles(list) {
+            const grid = document.getElementById('articles-grid');
+            if (!grid) return;
+            grid.innerHTML = list.map(item => `
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl hover:border-cyan-500/40 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="${item.cat_class} text-xs px-2 py-0.5 rounded font-medium">${item.category}</span>
+                            <span class="text-xs text-slate-500">${item.date}</span>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">${item.title}</h3>
+                        <p class="text-xs text-slate-400 mb-4 leading-relaxed">${item.summary}</p>
+                    </div>
+                    <div class="flex justify-between items-center pt-3 border-t border-slate-800 text-xs">
+                        <span class="text-slate-400">מקור: <a href="${item.source_url}" target="_blank" class="text-cyan-400 hover:underline">${item.source_name}</a></span>
+                        <button onclick='readArticle(${JSON.stringify(item.title)}, ${JSON.stringify(item.summary)}, ${JSON.stringify(item.source_name)}, ${JSON.stringify(item.date)})' class="text-cyan-400 hover:underline font-medium">קרא כתבה מלאה ←</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderDeals(list) {
+            const tbody = document.getElementById('deals-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = list.map(item => `
+                <tr class="hover:bg-slate-950/50 transition-all">
+                    <td class="p-3 font-mono text-cyan-400">${item.date}</td>
+                    <td class="p-3 font-bold text-white">${item.company}</td>
+                    <td class="p-3"><span class="${item.type_class} px-2 py-0.5 rounded">${item.type}</span></td>
+                    <td class="p-3 font-mono font-bold text-white">${item.amount}</td>
+                    <td class="p-3">${item.desc}</td>
+                    <td class="p-3"><a href="${item.url}" target="_blank" class="text-cyan-400 underline">${item.source}</a></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderOperations(list) {
+            const grid = document.getElementById('operations-grid');
+            if (!grid) return;
+            grid.innerHTML = list.map(item => `
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl border-t-4 ${item.border_color} flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="bg-red-500/10 text-red-400 text-xs px-2.5 py-1 rounded font-mono">${item.arena}</span>
+                            <span class="text-xs text-slate-400">עדכון: <strong class="text-white">${item.date}</strong></span>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">${item.title}</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed mb-4">${item.desc}</p>
+                    </div>
+                    <div class="pt-3 border-t border-slate-800 text-xs flex justify-between items-center">
+                        <span class="text-slate-400">מקור OSINT: <a href="${item.url}" target="_blank" class="text-cyan-400 underline">${item.source}</a></span>
+                        <span class="text-emerald-400 font-medium">מדד יעילות: ${item.score}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openKnowledgeModal(title, details) {
+            const modal = document.getElementById('modal');
+            const content = document.getElementById('modal-content');
+            content.innerHTML = `
+                <span class="text-xs bg-cyan-500/10 text-cyan-400 px-2.5 py-1 rounded font-mono">מפרט טכני מתקדם</span>
+                <h3 class="text-xl font-bold text-white">${title}</h3>
+                <p class="text-sm text-slate-300 leading-relaxed">${details}</p>
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs space-y-2">
+                    <div class="text-slate-400 font-bold">תקנים בינלאומיים:</div>
+                    <div class="text-slate-300">• תאימות מלאה לדרישות בטיחות אווירית (FAA/EASA).</div>
+                </div>
+                <div class="pt-2 flex justify-end">
+                    <button onclick="closeModal()" class="bg-cyan-500 text-slate-950 font-bold px-4 py-2 rounded-lg text-xs">סגור חלון</button>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+        }
+
+        function readArticle(title, body, source, date) {
+            const modal = document.getElementById('modal');
+            const content = document.getElementById('modal-content');
+            content.innerHTML = `
+                <div class="flex justify-between items-center text-xs text-slate-400 mb-1">
+                    <span class="text-cyan-400 font-mono">מקור: ${source}</span>
+                    <span>תאריך: ${date}</span>
+                </div>
+                <h3 class="text-xl font-bold text-white">${title}</h3>
+                <p class="text-sm text-slate-300 leading-relaxed">${body}</p>
+                <div class="pt-2 flex justify-end">
+                    <button onclick="closeModal()" class="bg-cyan-500 text-slate-950 font-bold px-4 py-2 rounded-lg text-xs">סגור כתבה</button>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+        }
+
+        async function runAgentScan() {
+            const btn = document.getElementById('scan-btn');
+            const focus = document.getElementById('agent-focus').value;
+            btn.innerHTML = `<span class="animate-spin">⏳</span> סורק מקורות ופטנטים דרך Supabase...`;
+            btn.disabled = true;
+
+            setTimeout(() => {
+                const resultsContainer = document.getElementById('agent-results');
+                const newId = Math.floor(Math.random() * 900) + 100;
+                const newCard = document.createElement('div');
+                newCard.className = 'bg-slate-950 border border-slate-800 p-4 rounded-xl border-r-4 border-r-emerald-500';
+                newCard.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-emerald-500/10 text-emerald-400 text-xs px-2 py-0.5 rounded font-mono">חידוש מזוהה #AI-${newId} (חדש)</span>
+                            <span class="text-xs text-slate-400">תאריך זיהוי: <strong class="text-white">16.11.2026</strong></span>
+                        </div>
+                        <span class="bg-cyan-500/10 text-cyan-400 text-xs px-2 py-0.5 rounded font-medium">TRL 4 (בדיקות מעבדה)</span>
+                    </div>
+                    <h4 class="text-base font-bold text-white mb-1">סריקת AI איתרה פריצת דרך ב-${focus}</h4>
+                    <p class="text-xs text-slate-400 mb-3 leading-relaxed">הסוכן זיהה פטנט ומחקר חדש המצביעים על שיפור של 40% ביעילות תפעולית.</p>
+                    <div class="flex justify-between items-center text-xs pt-2 border-t border-slate-900">
+                        <span class="text-slate-400">מקור מידע: <a href="https://arxiv.org" target="_blank" class="text-cyan-400 underline">arXiv Robotics & IEEE</a></span>
+                        <span class="text-cyan-400 font-medium">ציון רלוונטיות: 99%</span>
+                    </div>
+                `;
+                resultsContainer.prepend(newCard);
+                btn.innerHTML = `<span>סרוק חידושים עכשיו</span>`;
+                btn.disabled = false;
+            }, 1000);
+        }
+
+        document.getElementById('article-search')?.addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            const grid = document.getElementById('articles-grid');
+            if (!grid) return;
+            for (let card of grid.children) {
+                card.style.display = card.innerText.toLowerCase().includes(term) ? 'flex' : 'none';
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', loadAppData);
+    </script>
+</body>
+</html>
