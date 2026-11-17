@@ -276,7 +276,7 @@
     </footer>
 
     <script>
-        // חיבור מאובטח ל-Supabase באמצעות מפתח ציבורי מורשה
+        // חיבור מוגן ואמין ל-Supabase
         const SUPABASE_URL = 'https://corstehotetpbaxglxlg.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_VqRZSGc_KHgyCwJtx9kpXg_r7J1t1wl';
         
@@ -297,19 +297,27 @@
         }
 
         function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(el => {
-                el.classList.remove('bg-cyan-500', 'text-slate-950', 'font-bold', 'shadow-md', 'shadow-cyan-500/20');
-                el.classList.add('text-slate-300', 'hover:bg-slate-800', 'hover:text-white');
-            });
+            try {
+                document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll('.tab-btn').forEach(el => {
+                    el.classList.remove('bg-cyan-500', 'text-slate-950', 'font-bold', 'shadow-md', 'shadow-cyan-500/20');
+                    el.classList.add('text-slate-300', 'hover:bg-slate-800', 'hover:text-white');
+                });
 
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-            const activeBtn = document.getElementById('btn-' + tabId);
-            activeBtn.classList.remove('text-slate-300', 'hover:bg-slate-800', 'hover:text-white');
-            activeBtn.classList.add('bg-cyan-500', 'text-slate-950', 'font-bold', 'shadow-md', 'shadow-cyan-500/20');
+                const targetTab = document.getElementById('tab-' + tabId);
+                if (targetTab) targetTab.classList.remove('hidden');
+
+                const activeBtn = document.getElementById('btn-' + tabId);
+                if (activeBtn) {
+                    activeBtn.classList.remove('text-slate-300', 'hover:bg-slate-800', 'hover:text-white');
+                    activeBtn.classList.add('bg-cyan-500', 'text-slate-950', 'font-bold', 'shadow-md', 'shadow-cyan-500/20');
+                }
+            } catch (err) {
+                console.error('Tab switch error:', err);
+            }
         }
 
-        // טעינת נתונים אמיתיים מתוך Supabase עם גיבוי בטוח
+        // טעינת נתונים בטוחה שלא תעצור את האתר בשום מקרה של תקלה בענן
         async function loadAppData() {
             const updateEl = document.getElementById('last-update-time');
             let articlesData = [
@@ -318,9 +326,8 @@
 
             if (supabaseClient) {
                 try {
-                    // תיקון שאילתת השליפה ותמיכה בשמות עמודות התאריך המסודרות בענן
                     const { data, error } = await supabaseClient.from('articles').select('*').order('created_at', { ascending: false });
-                    if (data && data.length > 0) {
+                    if (!error && data && data.length > 0) {
                         const latestTimestamp = data[0].created_at || data[0].collected_at || data[0].published_at;
                         if (updateEl) updateEl.textContent = formatLastUpdate(latestTimestamp);
 
@@ -333,15 +340,15 @@
                             source_name: item.source_name || 'Supabase Cloud',
                             source_url: item.url || '#'
                         }));
-                    } else if (updateEl) {
-                        updateEl.textContent = formatLastUpdate();
+                    } else {
+                        if (updateEl) updateEl.textContent = formatLastUpdate();
                     }
                 } catch (err) {
-                    console.log('Error loading from Supabase, using local fallback', err);
+                    console.log('Supabase query handled safely:', err);
                     if (updateEl) updateEl.textContent = formatLastUpdate();
                 }
-            } else if (updateEl) {
-                updateEl.textContent = formatLastUpdate();
+            } else {
+                if (updateEl) updateEl.textContent = formatLastUpdate();
             }
 
             renderArticles(articlesData);
@@ -419,6 +426,7 @@
         function openKnowledgeModal(title, details) {
             const modal = document.getElementById('modal');
             const content = document.getElementById('modal-content');
+            if (!modal || !content) return;
             content.innerHTML = `
                 <span class="text-xs bg-cyan-500/10 text-cyan-400 px-2.5 py-1 rounded font-mono">מפרט טכני מתקדם</span>
                 <h3 class="text-xl font-bold text-white">${title}</h3>
@@ -437,6 +445,7 @@
         function readArticle(title, body, source, date) {
             const modal = document.getElementById('modal');
             const content = document.getElementById('modal-content');
+            if (!modal || !content) return;
             content.innerHTML = `
                 <div class="flex justify-between items-center text-xs text-slate-400 mb-1">
                     <span class="text-cyan-400 font-mono">מקור: ${source}</span>
@@ -452,15 +461,17 @@
         }
 
         function closeModal() {
-            document.getElementById('modal').classList.add('hidden');
+            const modal = document.getElementById('modal');
+            if (modal) modal.classList.add('hidden');
         }
 
-        // שיפור מנגנון סריקת הסוכן לשליפה מבוססת ענן מסודרת
         async function runAgentScan() {
             const btn = document.getElementById('scan-btn');
             const focus = document.getElementById('agent-focus').value;
-            btn.innerHTML = `<span class="animate-spin">⏳</span> סורק מקורות ופטנטים דרך Supabase...`;
-            btn.disabled = true;
+            if (btn) {
+                btn.innerHTML = `<span class="animate-spin">⏳</span> סורק מקורות ופטנטים דרך Supabase...`;
+                btn.disabled = true;
+            }
 
             let liveScanResult = {
                 title: `סריקת AI איתרה פריצת דרך ב-${focus}`,
@@ -483,38 +494,45 @@
 
             setTimeout(() => {
                 const resultsContainer = document.getElementById('agent-results');
-                const newId = Math.floor(Math.random() * 900) + 100;
-                const newCard = document.createElement('div');
-                newCard.className = 'bg-slate-950 border border-slate-800 p-4 rounded-xl border-r-4 border-r-emerald-500';
-                newCard.innerHTML = `
-                    <div class="flex justify-between items-start mb-2">
-                        <div class="flex items-center gap-2">
-                            <span class="bg-emerald-500/10 text-emerald-400 text-xs px-2 py-0.5 rounded font-mono">חידוש מזוהה #AI-${newId} (סריקה חיה)</span>
-                            <span class="text-xs text-slate-400">תאריך זיהוי: <strong class="text-white">16.11.2026</strong></span>
+                if (resultsContainer) {
+                    const newId = Math.floor(Math.random() * 900) + 100;
+                    const newCard = document.createElement('div');
+                    newCard.className = 'bg-slate-950 border border-slate-800 p-4 rounded-xl border-r-4 border-r-emerald-500';
+                    newCard.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-emerald-500/10 text-emerald-400 text-xs px-2 py-0.5 rounded font-mono">חידוש מזוהה #AI-${newId} (סריקה חיה)</span>
+                                <span class="text-xs text-slate-400">תאריך זיהוי: <strong class="text-white">16.11.2026</strong></span>
+                            </div>
+                            <span class="bg-cyan-500/10 text-cyan-400 text-xs px-2 py-0.5 rounded font-medium">TRL 4 (בדיקות מעבדה)</span>
                         </div>
-                        <span class="bg-cyan-500/10 text-cyan-400 text-xs px-2 py-0.5 rounded font-medium">TRL 4 (בדיקות מעבדה)</span>
-                    </div>
-                    <h4 class="text-base font-bold text-white mb-1">${liveScanResult.title}</h4>
-                    <p class="text-xs text-slate-400 mb-3 leading-relaxed">${liveScanResult.summary}</p>
-                    <div class="flex justify-between items-center text-xs pt-2 border-t border-slate-900">
-                        <span class="text-slate-400">מקור מידע: <a href="${liveScanResult.url}" target="_blank" class="text-cyan-400 underline">arXiv Robotics & IEEE</a></span>
-                        <span class="text-cyan-400 font-medium">ציון רלוונטיות: 99%</span>
-                    </div>
-                `;
-                resultsContainer.prepend(newCard);
-                btn.innerHTML = `<span>סרוק חידושים עכשיו</span>`;
-                btn.disabled = false;
+                        <h4 class="text-base font-bold text-white mb-1">${liveScanResult.title}</h4>
+                        <p class="text-xs text-slate-400 mb-3 leading-relaxed">${liveScanResult.summary}</p>
+                        <div class="flex justify-between items-center text-xs pt-2 border-t border-slate-900">
+                            <span class="text-slate-400">מקור מידע: <a href="${liveScanResult.url}" target="_blank" class="text-cyan-400 underline">arXiv Robotics & IEEE</a></span>
+                            <span class="text-cyan-400 font-medium">ציון רלוונטיות: 99%</span>
+                        </div>
+                    `;
+                    resultsContainer.prepend(newCard);
+                }
+                if (btn) {
+                    btn.innerHTML = `<span>סרוק חידושים עכשיו</span>`;
+                    btn.disabled = false;
+                }
             }, 1000);
         }
 
-        document.getElementById('article-search')?.addEventListener('input', function(e) {
-            const term = e.target.value.toLowerCase();
-            const grid = document.getElementById('articles-grid');
-            if (!grid) return;
-            for (let card of grid.children) {
-                card.style.display = card.innerText.toLowerCase().includes(term) ? 'flex' : 'none';
-            }
-        });
+        const searchInput = document.getElementById('article-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                const term = e.target.value.toLowerCase();
+                const grid = document.getElementById('articles-grid');
+                if (!grid) return;
+                for (let card of grid.children) {
+                    card.style.display = card.innerText.toLowerCase().includes(term) ? 'flex' : 'none';
+                }
+            });
+        }
 
         window.addEventListener('DOMContentLoaded', loadAppData);
     </script>
