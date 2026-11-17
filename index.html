@@ -50,102 +50,8 @@
                 <h2 class="text-2xl font-bold text-white mb-1">תחומי הידע הנדרשים בעולם הרחפנות והכטב"מים</h2>
                 <p class="text-sm text-slate-400">מפת הידע ההנדסית, המבצעית והרגולטורית המקיפה לתעשיית הרחפנות המודרנית.</p>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-6">
-                    <!-- Card 1 -->
-                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl flex flex-col justify-between hover:border-cyan-500/40 transition-all">
-                        <div>
-                            <div class="flex justify-between items-center text-xs mb-3">
-                                <span class="bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono">תחום #01</span>
-                                <span class="text-slate-500">עודכן: 14.11.2026</span>
-                            </div>
-                            <h3 class="text-lg font-bold text-white mb-2">אווירודינמיקה והנעה מתקדמת</h3>
-                            <p class="text-xs text-slate-400 leading-relaxed mb-4">תכנון כנפיים, טורבינות, מנועי בראשלס מתקדמים, סוללות מצב-מוצק, ותאי סוללה היברידיים להארכת זמן שהייה באוויר (Endurance).</p>
-                        </div>
-                        <div class="pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
-                            <span class="text-slate-400">מקור תקן: <a href="https://www.nasa.gov/aerospace" target="_blank" class="text-cyan-400 hover:underline">NASA Aero / MIT</a></span>
-                            <button onclick="openKnowledgeModal('אווירודינמיקה והנעה מתקדמת', 'פירוט מערכות הנעה חשמליות, תאי דלק מימניים ויעילות מדחפים בגובה רב.')" class="text-cyan-400 hover:underline">הרחב ←</button>
-                        </div>
-                    </div>
-
-                    <!-- Card 2 -->
-                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl flex flex-col justify-between hover:border-cyan-500/40 transition-all">
-                        <div>
-                            <div class="flex justify-between items-center text-xs mb-3">
-                                <span class="bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono">תחום #02</span>
-                                <span class="text-slate-500">עודכן: 12.11.2026</span>
-                            </div>
-                            <h3 class="text-lg font-bold text-white mb-2">אוויוניקה ובקרת טיסה (Flight Control)</h3>
-                            <p class="text-xs text-slate-400 leading-relaxed mb-4">מערכות ניהול טיסה אוטונומיות, חיישני IMU ברמת דיוק גבוהה, שילוב GPS-Denied Navigation לטיסה בסביבה משובשת ללא לווינים.</p>
-                        </div>
-                        <div class="pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
-                            <span class="text-slate-400">מקור תקן: <a href="https://www.rtca.org" target="_blank" class="text-cyan-400 hover:underline">FAA / RTCA</a></span>
-                            <button onclick="openKnowledgeModal('אוויוניקה ובקרת טיסה', 'ניווט אופטי (Visual Odometry), סינון קלמן (EKF) ובקרי טיסה כפולי יתירות.')" class="text-cyan-400 hover:underline">הרחב ←</button>
-                        </div>
-                    </div>
-
-                    <!-- Card 3 -->
-                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl flex flex-col justify-between hover:border-cyan-500/40 transition-all">
-                        <div>
-                            <div class="flex justify-between items-center text-xs mb-3">
-                                <span class="bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono">תחום #03</span>
-                                <span class="text-slate-500">עודכן: 10.11.2026</span>
-                            </div>
-                            <h3 class="text-lg font-bold text-white mb-2">תקשורת, הצפנה ולוחמה אלקטרונית (ל"א)</h3>
-                            <p class="text-xs text-slate-400 leading-relaxed mb-4">ערוצי תקשורת חסיני שיבוש (FHSS), שליטה מבוססת סיב אופטי (Fiber Optic) לרחפני תקיפה, ומערכות הגנה מפני חסימות RF.</p>
-                        </div>
-                        <div class="pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
-                            <span class="text-slate-400">מקור תקן: <a href="https://www.nato.int/cps/en/natohq/topics_52044.htm" target="_blank" class="text-cyan-400 hover:underline">NATO STANAG 4586</a></span>
-                            <button onclick="openKnowledgeModal('תקשורת ול״א', 'פרוטוקולי דילוג תדרים, אנטנות כיווניות ותקשורת לוויינית (SATCOM) לטווחים ארוכים.')" class="text-cyan-400 hover:underline">הרחב ←</button>
-                        </div>
-                    </div>
-
-                    <!-- Card 4 -->
-                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl flex flex-col justify-between hover:border-cyan-500/40 transition-all">
-                        <div>
-                            <div class="flex justify-between items-center text-xs mb-3">
-                                <span class="bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono">תחום #04</span>
-                                <span class="text-slate-500">עודכן: 15.11.2026</span>
-                            </div>
-                            <h3 class="text-lg font-bold text-white mb-2">מטע"דים, אופטיקה ובינה מלאכותית קצה</h3>
-                            <p class="text-xs text-slate-400 leading-relaxed mb-4">מצלמות טרמיות מקוררות, מייצבים גירוסקופיים (Gimbals), ואלגוריתמי זיהוי מטרה אוטומטי (Computer Vision / ATR) על שבבי Edge AI.</p>
-                        </div>
-                        <div class="pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
-                            <span class="text-slate-400">מקור תקן: <a href="https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=7361" target="_blank" class="text-cyan-400 hover:underline">IEEE Sensors Journal</a></span>
-                            <button onclick="openKnowledgeModal('מטע״דים ו-Edge AI', 'עיבוד תמונה בזמן אמת לזיהוי מטרות, נעילה טרמית והיתוך חיישנים (EO/IR).')" class="text-cyan-400 hover:underline">הרחב ←</button>
-                        </div>
-                    </div>
-
-                    <!-- Card 5 -->
-                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl flex flex-col justify-between hover:border-cyan-500/40 transition-all">
-                        <div>
-                            <div class="flex justify-between items-center text-xs mb-3">
-                                <span class="bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono">תחום #05</span>
-                                <span class="text-slate-500">עודכן: 11.11.2026</span>
-                            </div>
-                            <h3 class="text-lg font-bold text-white mb-2">אוטונומיה מלאה ונחילי רחפנים (Swarming)</h3>
-                            <p class="text-xs text-slate-400 leading-relaxed mb-4">תיאום מבוזר בין עשרות ומאות כלים ללא מפעיל אנושי מרכזי, תכנון מסלול מונע התנגשות, וחלוקת משימות דינמית בשדה הקרב.</p>
-                        </div>
-                        <div class="pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
-                            <span class="text-slate-400">מקור תקן: <a href="https://www.darpa.mil/program/offsets" target="_blank" class="text-cyan-400 hover:underline">DARPA OFFSET Proj.</a></span>
-                            <button onclick="openKnowledgeModal('נחילי רחפנים', 'תקשורת Mesh בין כלים, קבלת החלטות מבוזרת והתגברות על אובדן כלים בנחיל.')" class="text-cyan-400 hover:underline">הרחב ←</button>
-                        </div>
-                    </div>
-
-                    <!-- Card 6 -->
-                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl flex flex-col justify-between hover:border-cyan-500/40 transition-all">
-                        <div>
-                            <div class="flex justify-between items-center text-xs mb-3">
-                                <span class="bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono">תחום #06</span>
-                                <span class="text-slate-500">עודכן: 09.11.2026</span>
-                            </div>
-                            <h3 class="text-lg font-bold text-white mb-2">רגולציה, תקיפה נגדית (C-UAS) ובטיחות מרחבית</h3>
-                            <p class="text-xs text-slate-400 leading-relaxed mb-4">חוקי טיסה מסחריים (U-Space, BVLOS), מערכות יירוט קינטיות ואלקטרוניות לרחפנים עוינים, והגנה על תשתיות קריטיות.</p>
-                        </div>
-                        <div class="pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
-                            <span class="text-slate-400">מקור תקן: <a href="https://www.easa.europa.eu/en/domains/civil-drones/u-space" target="_blank" class="text-cyan-400 hover:underline">EASA U-Space Guidelines</a></span>
-                            <button onclick="openKnowledgeModal('רגולציה ו-C-UAS', 'מכ״מים לגילוי מטרות זעירות, מערכות לייזר רב-עוצמה ורגולציית Remote ID.')" class="text-cyan-400 hover:underline">הרחב ←</button>
-                        </div>
-                    </div>
+                <div id="knowledge-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-6">
+                    <!-- נטען ממאגר הנתונים -->
                 </div>
             </div>
         </section>
@@ -161,7 +67,7 @@
             </div>
 
             <div id="articles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                <!-- Dynamic articles loaded from Supabase -->
+                <!-- נטען ממאגר הנתונים -->
             </div>
         </section>
 
@@ -205,21 +111,7 @@
             </div>
 
             <div id="agent-results" class="space-y-4">
-                <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl border-r-4 border-r-cyan-500">
-                    <div class="flex justify-between items-start mb-2">
-                        <div class="flex items-center gap-2">
-                            <span class="bg-cyan-500/10 text-cyan-400 text-xs px-2 py-0.5 rounded font-mono">חידוש מזוהה #AI-104</span>
-                            <span class="text-xs text-slate-400">תאריך זיהוי: <strong class="text-white">16.11.2026</strong></span>
-                        </div>
-                        <span class="bg-emerald-500/10 text-emerald-400 text-xs px-2 py-0.5 rounded font-medium">TRL 6 (הדגמת אבטיפוס)</span>
-                    </div>
-                    <h4 class="text-base font-bold text-white mb-1">ניווט אופטי מבוסס רשתות נוירונים ללא GPS (Sub-meter accuracy)</h4>
-                    <p class="text-xs text-slate-400 mb-3 leading-relaxed">פיתוח אלגוריתם SLAM קל-משקל הרץ על מעבדי ARM ומאפשר לרחפן לנווט בדיוק של סנטימטרים גם בתנאי חשיכה או שיבוש אלקטרוני מלא.</p>
-                    <div class="flex justify-between items-center text-xs pt-2 border-t border-slate-900">
-                        <span class="text-slate-400">מקור מידע: <a href="https://arxiv.org/abs/2301.00000" target="_blank" class="text-cyan-400 underline">arXiv Robotics & IEEE</a></span>
-                        <span class="text-cyan-400 font-medium">ציון רלוונטיות: 97%</span>
-                    </div>
-                </div>
+                <!-- נטען ממאגר הנתונים -->
             </div>
         </section>
 
@@ -242,7 +134,7 @@
                             </tr>
                         </thead>
                         <tbody id="deals-table-body" class="divide-y divide-slate-800/60">
-                            <!-- Dynamic deals -->
+                            <!-- נטען ממאגר הנתונים -->
                         </tbody>
                     </table>
                 </div>
@@ -256,7 +148,7 @@
                 <p class="text-sm text-slate-400">ניתוח שטח של טקטיקות הפעלה, יעילות שרידות מול לוחמה אלקטרונית, וזירות לחימה פעילות.</p>
 
                 <div id="operations-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
-                    <!-- Dynamic operations -->
+                    <!-- נטען ממאגר הנתונים -->
                 </div>
             </div>
         </section>
@@ -276,7 +168,6 @@
     </footer>
 
     <script>
-        // חיבור מוגן ואמין ל-Supabase
         const SUPABASE_URL = 'https://corstehotetpbaxglxlg.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_VqRZSGc_KHgyCwJtx9kpXg_r7J1t1wl';
         
@@ -317,110 +208,117 @@
             }
         }
 
-        // טעינת נתונים בטוחה שלא תעצור את האתר בשום מקרה של תקלה בענן
+        // טעינת נתונים אמיתיים מ-Supabase בלבד (ללא שום נתונים מומצאים)
         async function loadAppData() {
             const updateEl = document.getElementById('last-update-time');
-            let articlesData = [
-                { title: "פריצת דרך בסוללות מצב-מוצק לרחפנים", category: "טכנולוגיה", cat_class: "bg-blue-500/10 text-blue-400", date: "15.11.2026", summary: "חברת SolidPower בשיתוף מעבדות המחקר הציגו אבטיפוס מתקדם...", source_name: "Defense News", source_url: "https://www.defensenews.com" }
-            ];
-
-            if (supabaseClient) {
-                try {
-                    const { data, error } = await supabaseClient.from('articles').select('*').order('created_at', { ascending: false });
-                    if (!error && data && data.length > 0) {
-                        const latestTimestamp = data[0].created_at || data[0].collected_at || data[0].published_at;
-                        if (updateEl) updateEl.textContent = formatLastUpdate(latestTimestamp);
-
-                        articlesData = data.map(item => ({
-                            title: item.title,
-                            category: item.category || 'טכנולוגיה',
-                            cat_class: 'bg-cyan-500/10 text-cyan-400',
-                            date: item.published_at ? item.published_at.substring(0, 10) : '16.11.2026',
-                            summary: item.summary || 'אין תקציר זמין',
-                            source_name: item.source_name || 'Supabase Cloud',
-                            source_url: item.url || '#'
-                        }));
-                    } else {
-                        if (updateEl) updateEl.textContent = formatLastUpdate();
-                    }
-                } catch (err) {
-                    console.log('Supabase query handled safely:', err);
-                    if (updateEl) updateEl.textContent = formatLastUpdate();
-                }
-            } else {
-                if (updateEl) updateEl.textContent = formatLastUpdate();
+            if (!supabaseClient) {
+                if (updateEl) updateEl.textContent = 'אין חיבור ל-Supabase';
+                return;
             }
 
-            renderArticles(articlesData);
+            try {
+                // 1. שליפת כתבות מטבלת articles
+                const { data: articles, error: artErr } = await supabaseClient.from('articles').select('*').order('created_at', { ascending: false });
+                const articlesGrid = document.getElementById('articles-grid');
+                if (articlesGrid) {
+                    if (artErr || !articles || articles.length === 0) {
+                        articlesGrid.innerHTML = `<div class="col-span-3 text-center text-slate-500 py-10">אין כתבות זמינות במסד הנתונים כרגע.</div>`;
+                    } else {
+                        if (updateEl && articles[0].created_at) updateEl.textContent = formatLastUpdate(articles[0].created_at);
+                        articlesGrid.innerHTML = articles.map(item => `
+                            <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl hover:border-cyan-500/40 transition-all flex flex-col justify-between">
+                                <div>
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="bg-cyan-500/10 text-cyan-400 text-xs px-2 py-0.5 rounded font-medium">${item.category || 'כללי'}</span>
+                                        <span class="text-xs text-slate-500">${item.published_at ? item.published_at.substring(0, 10) : ''}</span>
+                                    </div>
+                                    <h3 class="text-base font-bold text-white mb-2">${item.title}</h3>
+                                    <p class="text-xs text-slate-400 mb-4 leading-relaxed">${item.summary || ''}</p>
+                                </div>
+                                <div class="flex justify-between items-center pt-3 border-t border-slate-800 text-xs">
+                                    <span class="text-slate-400">מקור: <a href="${item.url || '#'}" target="_blank" class="text-cyan-400 hover:underline">${item.source_name || 'קישור רשמי'}</a></span>
+                                    <button onclick='readArticle(${JSON.stringify(item.title)}, ${JSON.stringify(item.summary)}, ${JSON.stringify(item.source_name)}, ${JSON.stringify(item.published_at)})' class="text-cyan-400 hover:underline font-medium">קרא כתבה מלאה ←</button>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
 
-            const dealsData = [
-                { date: "15.11.2026", company: "Anduril Industries", type: "חוזה ביטחוני", type_class: "bg-emerald-500/10 text-emerald-400", amount: "$480M", desc: "אספקת אלפי מערכות ליירוט רחפנים אוטונומיות (Anvil-M).", source: "DoD Contracts", url: "https://www.defense.gov/News/Contracts/" },
-                { date: "12.11.2026", company: "Shield AI", type: "סבב גיוס F", type_class: "bg-purple-500/10 text-purple-400", amount: "$300M", desc: "הרחבת פיתוח תוכנת הטייס האוטונומי Hivemind.", source: "TechCrunch", url: "https://techcrunch.com" }
-            ];
-            renderDeals(dealsData);
+                // 2. שליפת תחומי ידע מטבלת knowledge_base (אם קיימת)
+                const { data: knowledge, error: knowErr } = await supabaseClient.from('knowledge_base').select('*');
+                const knowledgeGrid = document.getElementById('knowledge-grid');
+                if (knowledgeGrid) {
+                    if (knowErr || !knowledge || knowledge.length === 0) {
+                        knowledgeGrid.innerHTML = `<div class="col-span-3 text-center text-slate-500 py-10">אין תחומי ידע מוגדרים במסד הנתונים.</div>`;
+                    } else {
+                        knowledgeGrid.innerHTML = knowledge.map((item, idx) => `
+                            <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl flex flex-col justify-between hover:border-cyan-500/40 transition-all">
+                                <div>
+                                    <div class="flex justify-between items-center text-xs mb-3">
+                                        <span class="bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono">תחום #${idx + 1}</span>
+                                        <span class="text-slate-500">${item.updated_at ? item.updated_at.substring(0, 10) : ''}</span>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-white mb-2">${item.title}</h3>
+                                    <p class="text-xs text-slate-400 leading-relaxed mb-4">${item.description || ''}</p>
+                                </div>
+                                <div class="pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
+                                    <span class="text-slate-400">מקור תקן: <a href="${item.standard_url || '#'}" target="_blank" class="text-cyan-400 hover:underline">${item.standard_name || 'תיעוד רשמי'}</a></span>
+                                    <button onclick="openKnowledgeModal(${JSON.stringify(item.title)}, ${JSON.stringify(item.details || item.description)})" class="text-cyan-400 hover:underline">הרחב ←</button>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
 
-            const opsData = [
-                { arena: "זירת מזרח אירופה", date: "15.11.2026", border_color: "border-t-red-500", title: "אבולוציית היירוט האלקטרוני ורחפני סיב אופטי", desc: "שימוש אינטנסיבי במשבשי כיס ניידים לצד רחפני FPV המחוברים בסיב אופטי החסינים לחלוטין לשיבוש RF.", source: "RUSI Analysis", url: "https://www.rusi.org", score: "78%" },
-                { arena: "המזרח התיכון והים האדום", date: "14.11.2026", border_color: "border-t-amber-500", title: "יירוט נחילי כטב"מים ארוכי טווח", desc: "שילוב מערכות הגנה רב-שכבתיות ולוחמה אלקטרונית ליירוט מטרות איטיות בגובה נמוך.", source: "Janes Defence", url: "https://www.janes.com", score: "94%" }
-            ];
-            renderOperations(opsData);
-        }
+                // 3. שליפת עסקאות מטבלת deals
+                const { data: deals, error: dealsErr } = await supabaseClient.from('deals').select('*');
+                const dealsTableBody = document.getElementById('deals-table-body');
+                if (dealsTableBody) {
+                    if (dealsErr || !deals || deals.length === 0) {
+                        dealsTableBody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">אין עסקאות רשומות במסד הנתונים כרגע.</td></tr>`;
+                    } else {
+                        dealsTableBody.innerHTML = deals.map(item => `
+                            <tr class="hover:bg-slate-950/50 transition-all">
+                                <td class="p-3 font-mono text-cyan-400">${item.date || ''}</td>
+                                <td class="p-3 font-bold text-white">${item.company || ''}</td>
+                                <td class="p-3"><span class="bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded">${item.type || ''}</span></td>
+                                <td class="p-3 font-mono font-bold text-white">${item.amount || ''}</td>
+                                <td class="p-3">${item.description || ''}</td>
+                                <td class="p-3"><a href="${item.url || '#'}" target="_blank" class="text-cyan-400 underline">${item.source || 'מקור'}</a></td>
+                            </tr>
+                        `).join('');
+                    }
+                }
 
-        function renderArticles(list) {
-            const grid = document.getElementById('articles-grid');
-            if (!grid) return;
-            grid.innerHTML = list.map(item => `
-                <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl hover:border-cyan-500/40 transition-all flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="${item.cat_class} text-xs px-2 py-0.5 rounded font-medium">${item.category}</span>
-                            <span class="text-xs text-slate-500">${item.date}</span>
-                        </div>
-                        <h3 class="text-base font-bold text-white mb-2">${item.title}</h3>
-                        <p class="text-xs text-slate-400 mb-4 leading-relaxed">${item.summary}</p>
-                    </div>
-                    <div class="flex justify-between items-center pt-3 border-t border-slate-800 text-xs">
-                        <span class="text-slate-400">מקור: <a href="${item.source_url}" target="_blank" class="text-cyan-400 hover:underline">${item.source_name}</a></span>
-                        <button onclick='readArticle(${JSON.stringify(item.title)}, ${JSON.stringify(item.summary)}, ${JSON.stringify(item.source_name)}, ${JSON.stringify(item.date)})' class="text-cyan-400 hover:underline font-medium">קרא כתבה מלאה ←</button>
-                    </div>
-                </div>
-            `).join('');
-        }
+                // 4. שליפת פעילות מבצעית מטבלת operations
+                const { data: operations, error: opsErr } = await supabaseClient.from('operations').select('*');
+                const opsGrid = document.getElementById('operations-grid');
+                if (opsGrid) {
+                    if (opsErr || !operations || operations.length === 0) {
+                        opsGrid.innerHTML = `<div class="col-span-2 text-center text-slate-500 py-10">אין נתונים מבצעיים במסד הנתונים.</div>`;
+                    } else {
+                        opsGrid.innerHTML = operations.map(item => `
+                            <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl border-t-4 border-t-cyan-500 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex justify-between items-center mb-3">
+                                        <span class="bg-red-500/10 text-red-400 text-xs px-2.5 py-1 rounded font-mono">${item.arena || ''}</span>
+                                        <span class="text-xs text-slate-400">עדכון: <strong class="text-white">${item.date || ''}</strong></span>
+                                    </div>
+                                    <h3 class="text-base font-bold text-white mb-2">${item.title}</h3>
+                                    <p class="text-xs text-slate-400 leading-relaxed mb-4">${item.description || ''}</p>
+                                </div>
+                                <div class="pt-3 border-t border-slate-800 text-xs flex justify-between items-center">
+                                    <span class="text-slate-400">מקור: <a href="${item.url || '#'}" target="_blank" class="text-cyan-400 underline">${item.source || 'דיווח'}</a></span>
+                                    <span class="text-emerald-400 font-medium">מדד: ${item.score || ''}</span>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
 
-        function renderDeals(list) {
-            const tbody = document.getElementById('deals-table-body');
-            if (!tbody) return;
-            tbody.innerHTML = list.map(item => `
-                <tr class="hover:bg-slate-950/50 transition-all">
-                    <td class="p-3 font-mono text-cyan-400">${item.date}</td>
-                    <td class="p-3 font-bold text-white">${item.company}</td>
-                    <td class="p-3"><span class="${item.type_class} px-2 py-0.5 rounded">${item.type}</span></td>
-                    <td class="p-3 font-mono font-bold text-white">${item.amount}</td>
-                    <td class="p-3">${item.desc}</td>
-                    <td class="p-3"><a href="${item.url}" target="_blank" class="text-cyan-400 underline">${item.source}</a></td>
-                </tr>
-            `).join('');
-        }
-
-        function renderOperations(list) {
-            const grid = document.getElementById('operations-grid');
-            if (!grid) return;
-            grid.innerHTML = list.map(item => `
-                <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl border-t-4 ${item.border_color} flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-center mb-3">
-                            <span class="bg-red-500/10 text-red-400 text-xs px-2.5 py-1 rounded font-mono">${item.arena}</span>
-                            <span class="text-xs text-slate-400">עדכון: <strong class="text-white">${item.date}</strong></span>
-                        </div>
-                        <h3 class="text-base font-bold text-white mb-2">${item.title}</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed mb-4">${item.desc}</p>
-                    </div>
-                    <div class="pt-3 border-t border-slate-800 text-xs flex justify-between items-center">
-                        <span class="text-slate-400">מקור OSINT: <a href="${item.url}" target="_blank" class="text-cyan-400 underline">${item.source}</a></span>
-                        <span class="text-emerald-400 font-medium">מדד יעילות: ${item.score}</span>
-                    </div>
-                </div>
-            `).join('');
+            } catch (err) {
+                console.error('Error fetching data from Supabase:', err);
+            }
         }
 
         function openKnowledgeModal(title, details) {
@@ -431,10 +329,6 @@
                 <span class="text-xs bg-cyan-500/10 text-cyan-400 px-2.5 py-1 rounded font-mono">מפרט טכני מתקדם</span>
                 <h3 class="text-xl font-bold text-white">${title}</h3>
                 <p class="text-sm text-slate-300 leading-relaxed">${details}</p>
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs space-y-2">
-                    <div class="text-slate-400 font-bold">תקנים בינלאומיים:</div>
-                    <div class="text-slate-300">• תאימות מלאה לדרישות בטיחות אווירית (FAA/EASA).</div>
-                </div>
                 <div class="pt-2 flex justify-end">
                     <button onclick="closeModal()" class="bg-cyan-500 text-slate-950 font-bold px-4 py-2 rounded-lg text-xs">סגור חלון</button>
                 </div>
@@ -448,8 +342,8 @@
             if (!modal || !content) return;
             content.innerHTML = `
                 <div class="flex justify-between items-center text-xs text-slate-400 mb-1">
-                    <span class="text-cyan-400 font-mono">מקור: ${source}</span>
-                    <span>תאריך: ${date}</span>
+                    <span class="text-cyan-400 font-mono">מקור: ${source || 'כללי'}</span>
+                    <span>תאריך: ${date ? date.substring(0, 10) : ''}</span>
                 </div>
                 <h3 class="text-xl font-bold text-white">${title}</h3>
                 <p class="text-sm text-slate-300 leading-relaxed">${body}</p>
@@ -465,61 +359,54 @@
             if (modal) modal.classList.add('hidden');
         }
 
+        // סוכן AI - שולף תוצאות אמיתיות מטבלת ai_scans ב-Supabase בלבד
         async function runAgentScan() {
             const btn = document.getElementById('scan-btn');
             const focus = document.getElementById('agent-focus').value;
             if (btn) {
-                btn.innerHTML = `<span class="animate-spin">⏳</span> סורק מקורות ופטנטים דרך Supabase...`;
+                btn.innerHTML = `<span class="animate-spin">⏳</span> סורק נתונים מ-Supabase...`;
                 btn.disabled = true;
             }
 
-            let liveScanResult = {
-                title: `סריקת AI איתרה פריצת דרך ב-${focus}`,
-                summary: `הסוכן זיהה פטנט ומחקר חדש המצביעים על שיפור משמעותי ביעילות תפעולית.`,
-                url: "https://arxiv.org/abs/2301.00000"
-            };
+            const resultsContainer = document.getElementById('agent-results');
 
             if (supabaseClient) {
                 try {
-                    const { data } = await supabaseClient.from('ai_scans').select('*').limit(1);
-                    if (data && data.length > 0) {
-                        liveScanResult.title = data[0].title || liveScanResult.title;
-                        liveScanResult.summary = data[0].summary || liveScanResult.summary;
-                        liveScanResult.url = data[0].url || liveScanResult.url;
+                    const { data, error } = await supabaseClient.from('ai_scans').select('*').order('created_at', { ascending: false }).limit(1);
+                    if (!error && data && data.length > 0) {
+                        const item = data[0];
+                        if (resultsContainer) {
+                            const newCard = document.createElement('div');
+                            newCard.className = 'bg-slate-950 border border-slate-800 p-4 rounded-xl border-r-4 border-r-emerald-500';
+                            newCard.innerHTML = `
+                                <div class="flex justify-between items-start mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="bg-emerald-500/10 text-emerald-400 text-xs px-2 py-0.5 rounded font-mono">תוצאת סריקה חיה</span>
+                                        <span class="text-xs text-slate-400">תאריך: <strong class="text-white">${item.created_at ? item.created_at.substring(0, 10) : ''}</strong></span>
+                                    </div>
+                                    <span class="bg-cyan-500/10 text-cyan-400 text-xs px-2 py-0.5 rounded font-medium">${focus}</span>
+                                </div>
+                                <h4 class="text-base font-bold text-white mb-1">${item.title}</h4>
+                                <p class="text-xs text-slate-400 mb-3 leading-relaxed">${item.summary}</p>
+                                <div class="flex justify-between items-center text-xs pt-2 border-t border-slate-900">
+                                    <span class="text-slate-400">מקור: <a href="${item.url || '#'}" target="_blank" class="text-cyan-400 underline">${item.source_name || 'מסד נתונים'}</a></span>
+                                    <span class="text-cyan-400 font-medium">מאומת ענן</span>
+                                </div>
+                            `;
+                            resultsContainer.prepend(newCard);
+                        }
+                    } else {
+                        alert('לא נמצאו נתוני סריקה חדשים ב-Supabase עבור תחום זה.');
                     }
                 } catch (e) {
-                    console.log('Using default structured scan fallback');
+                    console.error('Scan error:', e);
                 }
             }
 
-            setTimeout(() => {
-                const resultsContainer = document.getElementById('agent-results');
-                if (resultsContainer) {
-                    const newId = Math.floor(Math.random() * 900) + 100;
-                    const newCard = document.createElement('div');
-                    newCard.className = 'bg-slate-950 border border-slate-800 p-4 rounded-xl border-r-4 border-r-emerald-500';
-                    newCard.innerHTML = `
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="flex items-center gap-2">
-                                <span class="bg-emerald-500/10 text-emerald-400 text-xs px-2 py-0.5 rounded font-mono">חידוש מזוהה #AI-${newId} (סריקה חיה)</span>
-                                <span class="text-xs text-slate-400">תאריך זיהוי: <strong class="text-white">16.11.2026</strong></span>
-                            </div>
-                            <span class="bg-cyan-500/10 text-cyan-400 text-xs px-2 py-0.5 rounded font-medium">TRL 4 (בדיקות מעבדה)</span>
-                        </div>
-                        <h4 class="text-base font-bold text-white mb-1">${liveScanResult.title}</h4>
-                        <p class="text-xs text-slate-400 mb-3 leading-relaxed">${liveScanResult.summary}</p>
-                        <div class="flex justify-between items-center text-xs pt-2 border-t border-slate-900">
-                            <span class="text-slate-400">מקור מידע: <a href="${liveScanResult.url}" target="_blank" class="text-cyan-400 underline">arXiv Robotics & IEEE</a></span>
-                            <span class="text-cyan-400 font-medium">ציון רלוונטיות: 99%</span>
-                        </div>
-                    `;
-                    resultsContainer.prepend(newCard);
-                }
-                if (btn) {
-                    btn.innerHTML = `<span>סרוק חידושים עכשיו</span>`;
-                    btn.disabled = false;
-                }
-            }, 1000);
+            if (btn) {
+                btn.innerHTML = `<span>סרוק חידושים עכשיו</span>`;
+                btn.disabled = false;
+            }
         }
 
         const searchInput = document.getElementById('article-search');
