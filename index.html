@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AERO-INTEL | מרכז המודיעין לעולם הרחפנות</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap');
         body { font-family: 'Heebo', sans-serif; background-color: #020617; color: #f8fafc; }
@@ -40,6 +39,17 @@
             <button onclick="switchTab('operations')" id="btn-operations" class="tab-btn text-slate-300 hover:bg-slate-800 hover:text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-all">🎯 ביצועים מבצעיים</button>
         </div>
     </header>
+
+
+    <section class="max-w-7xl w-full mx-auto px-4 pt-5">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col md:flex-row gap-3 md:items-center">
+            <div class="flex-1">
+                <h2 class="text-sm font-bold text-white mb-1">גישה ציבורית למערכת</h2>
+                <p id="data-message" class="text-xs text-slate-400">טוען נתונים מהשרת המאובטח...</p>
+            </div>
+            <button id="refresh-data-btn" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-lg px-4 py-2 text-sm">רענן נתונים</button>
+        </div>
+    </section>
 
     <!-- Main Content -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8">
@@ -171,9 +181,6 @@
 (() => {
     'use strict';
 
-    const SUPABASE_URL = 'https://corstehotetpbaxglxlg.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_VqRZSGc_KHgyCwJtx9kpXg_r7J1t1wI';
-    let supabaseClient = null;
 
     const $ = (id) => document.getElementById(id);
     const esc = (value) => String(value ?? '').replace(/[&<>"']/g, ch => ({
@@ -195,6 +202,13 @@
         if ($('connection-status')) $('connection-status').textContent = text;
         if ($('connection-indicator')) {
             $('connection-indicator').className = 'w-2 h-2 rounded-full ' + (ok ? 'bg-emerald-400' : 'bg-amber-400');
+        }
+    };
+    const message = (text, isError = false) => {
+        const el = $('auth-message') || $('data-message');
+        if (el) {
+            el.textContent = text;
+            el.className = 'text-xs ' + (isError ? 'text-rose-300' : 'text-slate-400');
         }
     };
     const empty = (el, text, colspan) => {
@@ -248,15 +262,48 @@
             </article>`).join('');
     }
 
-    async function loadArticles() {
-        const grid = $('articles-grid');
-        const { data, error } = await supabaseClient.from('articles')
-            .select('*').order('collected_at', { ascending:false }).limit(100);
-        if (error) { empty(grid, 'שגיאה בטעינת כתבות: ' + error.message); return; }
-        if (!data?.length) { empty(grid, 'אין כתבות במאגר עדיין.'); return; }
+    async function loadAppData() {
+        setStatus('טוען נתונים מהשרת', false);
+        const refresh = $('last-update-time');
+        if (refresh) refresh.textContent = 'טוען...';
+        try {
+            const response = await fetch('/.netlify/functions/public-data', {
+                method: 'GET',
+                headers: { 'Accept': 'application/json' },
+                cache: 'no-store'
+            });
+            const payload = await response.json();
+            if (!response.ok) throw new Error(payload.error || 'שגיאה בקבלת נתונים מהשרת');
 
-        const latest = data.find(x => x.collected_at)?.collected_at;
-        if (latest && $('last-update-time')) $('last-update-time').textContent = dateText(latest);
+            const articles = payload.articles || [];
+            const deals = payload.deals || [];
+            const events = payload.events || [];
+            renderArticles(articles);
+            renderDeals(deals);
+            renderEvents(events);
+
+            const errors = Object.keys(payload.errors || {});
+            if (errors.length) {
+                setStatus('חלק מהנתונים לא נטענו', false);
+                $('data-message').textContent = 'האתר פתוח לציבור. חלק מהטבלאות לא נטענו: ' + errors.join(', ') + '. בדוק את מבנה הטבלאות ב-Supabase.';
+            } else {
+                setStatus('הנתונים נטענו מהשרת', true);
+                $('data-message').textContent = 'האתר פתוח לציבור. הנתונים נקראים דרך פונקציית שרת מאובטחת; לא נדרשת התחברות משתמש.';
+            }
+            if (refresh) refresh.textContent = dateText(payload.fetched_at || new Date().toISOString());
+        } catch (err) {
+            console.error(err);
+            setStatus('השרת אינו זמין', false);
+            $('data-message').textContent = err.message || 'לא ניתן לטעון נתונים. בדוק את הגדרות Netlify.';
+            empty($('articles-grid'), 'לא ניתן לטעון כתבות כרגע.');
+            empty($('deals-table-body'), 'לא ניתן לטעון עסקאות כרגע.', 6);
+            empty($('operations-grid'), 'לא ניתן לטעון אירועים כרגע.');
+        }
+    }
+
+    function renderArticles(data) {
+        const grid = $('articles-grid');
+        if (!data.length) return empty(grid, 'אין כתבות במאגר עדיין.');
         grid.innerHTML = data.map(item => {
             const url = safeUrl(item.url);
             const status = item.verification_status || 'סטטוס אימות לא צוין';
@@ -275,32 +322,25 @@
         }).join('');
     }
 
-    async function loadDeals() {
+    function renderDeals(data) {
         const body = $('deals-table-body');
-        const { data, error } = await supabaseClient.from('deals')
-            .select('*').order('announcement_date', { ascending:false }).limit(100);
-        if (error) { empty(body, 'שגיאה בטעינת עסקאות: ' + error.message, 6); return; }
-        if (!data?.length) { empty(body, 'אין עסקאות רשומות במאגר כרגע.', 6); return; }
+        if (!data.length) return empty(body, 'אין עסקאות רשומות במאגר כרגע.', 6);
         body.innerHTML = data.map(item => {
-            const amount = item.value_amount == null ? '—' :
-                `${esc(item.value_amount)} ${esc(item.currency || '')}`;
+            const amount = item.value_amount == null ? '—' : `${esc(item.value_amount)} ${esc(item.currency || '')}`;
             return `<tr class="hover:bg-slate-950/50 transition-all">
                 <td class="p-3 font-mono text-cyan-400">${dateText(item.announcement_date)}</td>
-                <td class="p-3 font-bold text-white">${esc(item.company_name || 'לא צוין')}</td>
+                <td class="p-3 font-bold text-white">${esc(item.title || 'לא צוין')}</td>
                 <td class="p-3">${esc(item.deal_type || '—')}</td>
                 <td class="p-3 font-mono font-bold text-white">${amount}</td>
-                <td class="p-3">${esc(item.summary || item.title || '—')}</td>
+                <td class="p-3">${esc(item.summary || '—')}</td>
                 <td class="p-3">${sourceLink(item.source_url)}</td>
             </tr>`;
         }).join('');
     }
 
-    async function loadEvents() {
+    function renderEvents(data) {
         const grid = $('operations-grid');
-        const { data, error } = await supabaseClient.from('events')
-            .select('*').order('event_date', { ascending:false }).limit(100);
-        if (error) { empty(grid, 'שגיאה בטעינת אירועים: ' + error.message); return; }
-        if (!data?.length) { empty(grid, 'אין אירועים או דיווחים רשומים במאגר כרגע.'); return; }
+        if (!data.length) return empty(grid, 'אין אירועים או דיווחים רשומים במאגר כרגע.');
         grid.innerHTML = data.map(item => `
             <article class="bg-slate-900 border border-slate-800 p-5 rounded-xl border-t-4 border-t-cyan-500 flex flex-col justify-between">
                 <div>
@@ -316,39 +356,23 @@
             </article>`).join('');
     }
 
-    async function loadAppData() {
-        setStatus('מחובר — טוען נתונים', true);
-        const refresh = $('last-update-time');
-        if (refresh) refresh.textContent = dateText(new Date().toISOString()) + ' (רענון ממשק)';
-        await Promise.allSettled([loadArticles(), loadDeals(), loadEvents()]);
-        setStatus('מחובר ל-Supabase', true);
-    }
-
     window.runAgentScan = function() {
         const focus = $('agent-focus')?.value || 'כללי';
+        message('מנוע הסריקה האוטומטי עדיין לא הוגדר. הכפתור אינו מפעיל סריקה ואינו יוצר תוצאות מדומות. התחום שנבחר: ' + focus + '.');
         const results = $('agent-results');
-        if (results) results.innerHTML = `<div class="bg-slate-950 border border-amber-800/60 p-4 rounded-xl text-sm text-amber-200">מנוע AI אינו מחובר. תחום נבחר: ${esc(focus)}.</div>`;
+        if (results) results.innerHTML = `<div class="bg-slate-950 border border-amber-800/60 p-4 rounded-xl text-sm text-amber-200">מנוע AI לא מחובר עדיין. כדי להפעיל סריקה אמיתית נדרש Backend מאובטח, ספק AI ותהליך איסוף מתוזמן.</div>`;
     };
 
     document.addEventListener('DOMContentLoaded', async () => {
         renderKnowledge();
+        $('refresh-data-btn')?.addEventListener('click', loadAppData);
         $('article-search')?.addEventListener('input', (e) => {
             const term = e.target.value.toLocaleLowerCase('he');
             document.querySelectorAll('#articles-grid article').forEach(card => {
                 card.style.display = card.innerText.toLocaleLowerCase('he').includes(term) ? 'flex' : 'none';
             });
         });
-        if (!window.supabase) {
-            setStatus('ספריית Supabase לא נטענה', false);
-            return;
-        }
-        try {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            await loadAppData();
-        } catch (err) {
-            console.error(err);
-            setStatus('שגיאת חיבור', false);
-        }
+        await loadAppData();
     });
 })();
 </script>
