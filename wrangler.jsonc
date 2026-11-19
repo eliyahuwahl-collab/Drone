@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json.schemastore.org/wrangler",
+  "name": "drone",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-11-19",
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  }
+}
