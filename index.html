@@ -267,7 +267,7 @@
         const refresh = $('last-update-time');
         if (refresh) refresh.textContent = 'טוען...';
         try {
-            const response = await fetch('/.netlify/functions/public-data', {
+            const response = await fetch('/api/public-data', {
                 method: 'GET',
                 headers: { 'Accept': 'application/json' },
                 cache: 'no-store'
@@ -294,7 +294,7 @@
         } catch (err) {
             console.error(err);
             setStatus('השרת אינו זמין', false);
-            $('data-message').textContent = err.message || 'לא ניתן לטעון נתונים. בדוק את הגדרות Netlify.';
+            $('data-message').textContent = err.message || 'לא ניתן לטעון נתונים. בדוק את הגדרות Cloudflare.';
             empty($('articles-grid'), 'לא ניתן לטעון כתבות כרגע.');
             empty($('deals-table-body'), 'לא ניתן לטעון עסקאות כרגע.', 6);
             empty($('operations-grid'), 'לא ניתן לטעון אירועים כרגע.');
