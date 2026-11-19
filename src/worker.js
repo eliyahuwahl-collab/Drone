@@ -64,7 +64,11 @@ export default {
       if (!supabaseUrl || !supabaseKey) {
         return json({
           error: "Server data connection is not configured yet.",
-          code: "SUPABASE_SERVER_SECRET_MISSING"
+          code: "SUPABASE_SERVER_SECRET_MISSING",
+          diagnostics: {
+            hasSupabaseUrl: Boolean(supabaseUrl),
+            hasSupabaseSecretKey: Boolean(supabaseKey)
+          }
         }, 503);
       }
 
