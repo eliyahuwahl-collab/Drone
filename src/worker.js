@@ -24,7 +24,7 @@ const json = (data, status = 200) => new Response(JSON.stringify(data), {
 
 async function readPublicTable(baseUrl, key, table, config) {
   const url = new URL(`/rest/v1/${table}`, baseUrl);
-  url.searchParams.set("select", "*");
+  url.searchParams.set("select", config.fields.join(","));
   url.searchParams.set("order", `${config.order}.desc.nullslast`);
   url.searchParams.set("limit", "100");
 
