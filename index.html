@@ -75,6 +75,7 @@
                 </div>
                 <input type="text" id="article-search" placeholder="חיפוש כתבות..." class="bg-slate-900 border border-slate-800 text-sm rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500 w-full md:w-64">
             </div>
+            <div id="article-filters" class="flex flex-wrap gap-2" aria-label="סינון כתבות לפי נושא"></div>
 
             <div id="articles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 <!-- נטען ממאגר הנתונים -->
@@ -301,25 +302,79 @@
         }
     }
 
-    function renderArticles(data) {
+    let articleItems = [];
+    let activeArticleTopic = 'הכול';
+
+    function articleTopic(item) {
+        const haystack = [item.title, item.summary, item.category].filter(Boolean).join(' ').toLocaleLowerCase('he');
+        const rules = [
+            ['הגנה ונגד רחפנים (C-UAS)', /counter.?uas|c-uas|anti.?drone|counter.?drone|נגד רחפנים|הגנה אווירית|יירוט|שיבוש|jamming|radar|ר radar/],
+            ['ביטחון וצבא', /military|defen[cs]e|army|navy|air force|combat|warfare|חיל|צה.?ל|צבא|ביטחון|תקיפה|כטב.?ם קרבי/],
+            ['אוטונומיה ובינה מלאכותית', /autonom|artificial intelligence|\bai\b|machine learning|swarm|נחיל|אוטונומ|בינה מלאכותית|למידת מכונה/],
+            ['טכנולוגיה ופיתוח', /technology|prototype|sensor|payload|navigation|通信|טכנולוג|חיישן|ניווט|פיתוח|מערכת חדשה/],
+            ['סוללות ואנרגיה', /battery|batteries|hydrogen|fuel cell|power system|energy|סולל|מימן|אנרגיה|הנעה/],
+            ['רגולציה ובטיחות', /regulat|faa|easa|airspace|safety|legislation|תקנות|רגולציה|בטיחות|רשות התעופה/],
+            ['מסחר, השקעות ועסקאות', /acqui[rs]|merger|funding|investment|contract|award|revenue|מיזוג|רכישה|השקעה|גיוס|חוזה|מכרז|הכנסות/],
+            ['תעשייה וייצור', /manufactur|production|factory|supply chain|ייצור|מפעל|שרשרת אספקה/],
+            ['חקלאות ומיפוי', /agricultur|farming|mapping|survey|inspection|חקל|מיפוי|מדידה|סקר|בדיקה/],
+            ['לוגיסטיקה ותעופה אזרחית', /delivery|cargo|logistics|evtol|urban air mobility|transport|משלוחים|לוגיסטיקה|תעופה אזרחית|תחבורה אווירית/]
+        ];
+        for (const [name, pattern] of rules) if (pattern.test(haystack)) return name;
+        return 'חדשות כלליות';
+    }
+
+    function articleSourceInfo(item) {
+        let host = '';
+        try { host = new URL(item.url).hostname.replace(/^www\./, ''); } catch {}
+        const country = String(item.country || '').toLowerCase();
+        const israeliDomains = ['isradrone.co.il','ynet.co.il','mako.co.il','n12.co.il','calcalist.co.il','globes.co.il','israelhayom.co.il','iaf.org.il','iai.co.il','elbitsystems.com'];
+        const isIsraeli = country.includes('israel') || country.includes('ישראל') || host.endsWith('.il') || israeliDomains.some(d => host === d || host.endsWith('.' + d));
+        return { host: host || 'מקור לא ידוע', isIsraeli };
+    }
+
+    function renderArticleList() {
         const grid = $('articles-grid');
-        if (!data.length) return empty(grid, 'אין כתבות במאגר עדיין.');
-        grid.innerHTML = data.map(item => {
+        const term = ($('article-search')?.value || '').toLocaleLowerCase('he').trim();
+        const topics = ['הכול', ...new Set(articleItems.map(articleTopic))];
+        const filters = $('article-filters');
+        if (filters) {
+            if (!topics.includes(activeArticleTopic)) activeArticleTopic = 'הכול';
+            filters.innerHTML = topics.map(topic => `
+                <button type="button" data-topic="${esc(topic)}" class="px-3 py-1.5 rounded-full text-xs border transition-all ${activeArticleTopic === topic ? 'bg-cyan-500 border-cyan-400 text-slate-950 font-bold' : 'bg-slate-900 border-slate-700 text-slate-300 hover:border-cyan-500'}">${esc(topic)} <span class="opacity-70">(${topic === 'הכול' ? articleItems.length : articleItems.filter(x => articleTopic(x) === topic).length})</span></button>
+            `).join('');
+        }
+        const filtered = articleItems.filter(item => {
+            const matchesTopic = activeArticleTopic === 'הכול' || articleTopic(item) === activeArticleTopic;
+            const matchesText = !term || [item.title, item.summary, item.category, item.url].filter(Boolean).join(' ').toLocaleLowerCase('he').includes(term);
+            return matchesTopic && matchesText;
+        });
+        if (!filtered.length) return empty(grid, 'לא נמצאו כתבות בנושא או בחיפוש שבחרת.');
+        grid.innerHTML = filtered.map(item => {
             const url = safeUrl(item.url);
             const status = item.verification_status || 'סטטוס אימות לא צוין';
+            const source = articleSourceInfo(item);
             return `<article class="bg-slate-900 border border-slate-800 p-5 rounded-xl hover:border-cyan-500/40 transition-all flex flex-col justify-between">
                 <div>
-                    <div class="flex justify-between items-center gap-2 mb-2">
-                        <span class="bg-cyan-500/10 text-cyan-400 text-xs px-2 py-0.5 rounded">${esc(item.category || 'כללי')}</span>
+                    <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+                        <span class="bg-cyan-500/10 text-cyan-400 text-xs px-2 py-0.5 rounded">${esc(articleTopic(item))}</span>
                         <span class="text-xs text-slate-500">${dateText(item.published_at || item.collected_at)}</span>
                     </div>
                     <h3 class="text-base font-bold text-white mb-2">${esc(item.title || 'ללא כותרת')}</h3>
                     <p class="text-xs text-slate-400 mb-4 leading-relaxed">${esc(item.summary || 'אין תקציר זמין.')}</p>
-                    <div class="text-xs text-slate-500 mb-3">מדינה: ${esc(item.country || 'לא צוין')} · אימות: ${esc(status)}</div>
+                    <div class="flex flex-wrap gap-2 items-center text-xs text-slate-500 mb-3">
+                        <span>מקור: <b class="text-slate-300" dir="ltr">${esc(source.host)}</b></span>
+                        ${source.isIsraeli ? '<span class="bg-blue-500/10 text-blue-300 border border-blue-500/20 rounded px-2 py-0.5">אתר ישראלי</span>' : ''}
+                        <span>אימות: ${esc(status)}</span>
+                    </div>
                 </div>
                 <div class="pt-3 border-t border-slate-800 text-xs">${url ? sourceLink(url, 'לכתבה המקורית ←') : 'קישור מקור לא זמין'}</div>
             </article>`;
         }).join('');
+    }
+
+    function renderArticles(data) {
+        articleItems = Array.isArray(data) ? data : [];
+        renderArticleList();
     }
 
     function renderDeals(data) {
@@ -366,11 +421,12 @@
     document.addEventListener('DOMContentLoaded', async () => {
         renderKnowledge();
         $('refresh-data-btn')?.addEventListener('click', loadAppData);
-        $('article-search')?.addEventListener('input', (e) => {
-            const term = e.target.value.toLocaleLowerCase('he');
-            document.querySelectorAll('#articles-grid article').forEach(card => {
-                card.style.display = card.innerText.toLocaleLowerCase('he').includes(term) ? 'flex' : 'none';
-            });
+        $('article-search')?.addEventListener('input', renderArticleList);
+        $('article-filters')?.addEventListener('click', (e) => {
+            const button = e.target.closest('button[data-topic]');
+            if (!button) return;
+            activeArticleTopic = button.dataset.topic || 'הכול';
+            renderArticleList();
         });
         await loadAppData();
     });
