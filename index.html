@@ -44,10 +44,10 @@
     <section class="max-w-7xl w-full mx-auto px-4 pt-5">
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col md:flex-row gap-3 md:items-center">
             <div class="flex-1">
-                <h2 class="text-sm font-bold text-white mb-1">גישה ציבורית למערכת</h2>
-                <p id="data-message" class="text-xs text-slate-400">טוען נתונים מהשרת המאובטח...</p>
+                <h2 class="text-sm font-bold text-white mb-1">עדכון ידני של כל מקורות המידע</h2>
+                <p id="data-message" class="text-xs text-slate-400">הנתונים מוצגים מהמאגר. איסוף מקורות מתבצע רק בלחיצה על הכפתור.</p>
             </div>
-            <button id="refresh-data-btn" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-lg px-4 py-2 text-sm">רענן נתונים</button>
+            <button id="refresh-data-btn" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-lg px-4 py-2 text-sm">עדכן את כל המקורות עכשיו</button>
         </div>
     </section>
 
@@ -87,11 +87,11 @@
             <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h2 class="text-2xl font-bold text-white mb-1">🤖 סוכן חדשנות AI (מקושר ל-Supabase)</h2>
-                    <p class="text-sm text-slate-400">ממשק לסקירות AI. מנוע האיסוף והניתוח האוטומטי עדיין לא הופעל בצד השרת.</p>
+                    <p class="text-sm text-slate-400">סריקה ממוקדת של כתבות חדשות מהמאגר לפי תחום עניין. התוצאות מבוססות על התאמת מילות מפתח, לא על מודל AI גנרטיבי.</p>
                 </div>
                 <span class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs px-3 py-1.5 rounded-full flex items-center gap-2 font-mono">
                     <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-                    Agent Status: Not configured
+                    Agent Status: Rule-based scan
                 </span>
             </div>
 
@@ -240,6 +240,24 @@
     }
     window.switchTab = switchTab;
 
+    async function refreshAllSources() {
+        const button = $('refresh-data-btn');
+        if (button) { button.disabled = true; button.textContent = 'אוסף ומעדכן מקורות...'; }
+        setStatus('איסוף מקורות מתבצע', false);
+        try {
+            const response = await fetch('/api/refresh-sources', { method: 'POST', headers: { 'Accept': 'application/json' } });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || 'עדכון המקורות נכשל');
+            if (result.status === "running") { message("עדכון המקורות כבר מתבצע. המתן מעט ורענן את הנתונים."); }
+            else {
+                const r = result.report || {};
+                message("העדכון הסתיים. מקורות שנבדקו: " + (r.sources_checked||0) + "; פידים שנמצאו: " + (r.feeds_found||0) + "; כתבות חדשות: " + (r.articles_added||0) + "; כתבות ישנות שנדחו: " + (r.articles_skipped_old||0) + "; ללא תאריך: " + (r.articles_skipped_undated||0) + "; עסקאות: " + (r.deals_added||0) + "; אירועים: " + (r.events_added||0) + "; שגיאות: " + (r.errors||[]).length + ".");
+                if ((r.errors || []).length) console.warn('Source refresh errors', r.errors);
+            }
+            await loadAppData();
+        } catch (err) { message(err.message || "עדכון המקורות נכשל", true); setStatus("עדכון נכשל", false); }
+        finally { if (button) { button.disabled = false; button.textContent = "עדכן את כל המקורות עכשיו"; } }
+    }
     function renderKnowledge() {
         const topics = [
             ['פלטפורמות אוויריות','מבנה, תצורות, קטגוריות, ביצועים וארכיטקטורות של כלי טיס בלתי מאוישים.'],
@@ -411,16 +429,25 @@
             </article>`).join('');
     }
 
-    window.runAgentScan = function() {
+    window.runAgentScan = async function() {
         const focus = $('agent-focus')?.value || 'כללי';
-        message('מנוע הסריקה האוטומטי עדיין לא הוגדר. הכפתור אינו מפעיל סריקה ואינו יוצר תוצאות מדומות. התחום שנבחר: ' + focus + '.');
-        const results = $('agent-results');
-        if (results) results.innerHTML = `<div class="bg-slate-950 border border-amber-800/60 p-4 rounded-xl text-sm text-amber-200">מנוע AI לא מחובר עדיין. כדי להפעיל סריקה אמיתית נדרש Backend מאובטח, ספק AI ותהליך איסוף מתוזמן.</div>`;
+        const button = $('scan-btn'), results = $('agent-results');
+        if (button) { button.disabled = true; button.textContent = 'סורק את המאגר...'; }
+        if (results) results.innerHTML = '<div class="text-sm text-slate-400">מנתח כתבות מהשבוע האחרון...</div>';
+        try {
+            const response = await fetch('/api/innovation-scan?focus=' + encodeURIComponent(focus), { method: 'POST', headers: { 'Accept': 'application/json' } });
+            const payload = await response.json();
+            if (!response.ok) throw new Error(payload.error || 'הסריקה נכשלה');
+            const items = payload.results || [];
+            if (!items.length) { results.innerHTML = '<div class="bg-slate-900 border border-slate-800 p-4 rounded-xl text-sm text-slate-400">לא נמצאו התאמות בתחום שנבחר בכתבות מהשבוע האחרון. נסה תחום אחר או עדכן את המקורות.</div>'; return; }
+            results.innerHTML = '<div class="text-xs text-slate-400 mb-3">נבדקו ' + payload.scanned + ' כתבות. נמצאו ' + items.length + ' פריטים רלוונטיים. סריקה מבוססת כללים, לא ניתוח AI גנרטיבי.</div>' + items.map(item => '<article class="bg-slate-900 border border-slate-800 p-4 rounded-xl"><div class="text-xs text-cyan-400 mb-2">' + esc(item.category || "חדשנות") + " · " + dateText(item.published_at) + '</div><h3 class="font-bold text-white mb-2">' + esc(item.title) + '</h3><p class="text-xs text-slate-400 mb-3">' + esc(item.summary || "") + '</p>' + sourceLink(item.url, "למקור המקורי ←") + '</article>').join("");
+        } catch (err) { if (results) results.innerHTML = '<div class="text-sm text-rose-300">' + esc(err.message) + '</div>'; }
+        finally { if (button) { button.disabled = false; button.innerHTML = '<span>סרוק חידושים עכשיו</span>'; } }
     };
 
     document.addEventListener('DOMContentLoaded', async () => {
         renderKnowledge();
-        $('refresh-data-btn')?.addEventListener('click', loadAppData);
+        $('refresh-data-btn')?.addEventListener('click', refreshAllSources);
         $('article-search')?.addEventListener('input', renderArticleList);
         $('article-filters')?.addEventListener('click', (e) => {
             const button = e.target.closest('button[data-topic]');
