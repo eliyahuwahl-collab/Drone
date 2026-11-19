@@ -75,18 +75,22 @@ export default {
         return json({ error: "Server configuration is invalid." }, 500);
       }
 
-      const entries = await Promise.all(
-        Object.entries(TABLES).map(async ([table, config]) => [
-          table,
-          await readPublicTable(normalizedUrl, supabaseKey, table, config)
-        ])
-      );
+      const [articlesResult, dealsResult, eventsResult] = await Promise.all([
+        readPublicTable(normalizedUrl, supabaseKey, "articles", TABLES.articles),
+        readPublicTable(normalizedUrl, supabaseKey, "deals", TABLES.deals),
+        readPublicTable(normalizedUrl, supabaseKey, "events", TABLES.events)
+      ]);
 
-      const payload = { fetched_at: new Date().toISOString(), articles: [], deals: [], events: [], errors: {} };
-      for (const [table, result] of entries) {
-        payload[table] = result.data;
-        if (result.error) payload.errors[table] = result.error;
-      }
+      const payload = {
+        fetched_at: new Date().toISOString(),
+        articles: articlesResult.data,
+        deals: dealsResult.data,
+        events: eventsResult.data,
+        errors: {}
+      };
+      if (articlesResult.error) payload.errors.articles = articlesResult.error;
+      if (dealsResult.error) payload.errors.deals = dealsResult.error;
+      if (eventsResult.error) payload.errors.events = eventsResult.error;
       return json(payload);
     }
 
