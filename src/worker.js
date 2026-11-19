@@ -197,14 +197,31 @@ export default {
       catch(e){return json({status:"failed",error:String(e)},500)}
     }
     if(url.pathname==="/api/innovation-scan" && request.method==="POST") {
-      const origin=request.headers.get("origin");if(!origin||new URL(origin).host!==url.host)return json({error:"Same-origin request required"},403);
-      const key=env.SUPABASE_SECRET_KEY||env.SUPABASE_SERVICE_ROLE_KEY,base=new URL(env.SUPABASE_URL).origin;
-      const focus=url.searchParams.get("focus")||"";
+      const origin=request.headers.get("origin");
+      if(!origin||new URL(origin).host!==url.host)return json({error:"Same-origin request required"},403);
+      if(!env.AI)return json({error:"Workers AI binding is not configured yet"},503);
+      const key=env.SUPABASE_SECRET_KEY||env.SUPABASE_SERVICE_ROLE_KEY;
+      if(!key||!env.SUPABASE_URL)return json({error:"Database connection unavailable"},503);
+      const base=new URL(env.SUPABASE_URL).origin;
+      const focus=url.searchParams.get("focus")||"drone industry innovation";
+      const depth=url.searchParams.get("depth")||"deep";
       const r=await readTable(base,key,"articles",TABLES.articles);
-      const terms=focus.toLowerCase().split(/[\s,()/-]+/).filter(x=>x.length>3);
-      const innovation=/prototype|patent|breakthrough|new platform|autonom|artificial intelligence|battery|hydrogen|sensor|payload|swarm|navigation|חדשנות|פטנט|פיתוח|אוטונומ|בינה מלאכותית|סוללה/;
-      const matches=r.data.filter(a=>innovation.test((a.title+" "+(a.summary||"")).toLowerCase())&&(terms.length===0||terms.some(t=>(a.title+" "+(a.summary||"")).toLowerCase().includes(t))));
-      return json({status:"completed",mode:"rule-based open-source scan (not generative AI)",focus,scanned:r.data.length,results:matches.slice(0,50)});
+      const candidates=r.data.slice(0,35);
+      if(!candidates.length)return json({status:"completed",focus,scanned:0,results:[],analysis:"אין כתבות מהשבוע האחרון במאגר."});
+      const compact=candidates.map((a,i)=>({id:i,title:a.title,summary:(a.summary||"").slice(0,700),category:a.category,published_at:a.published_at,url:a.url}));
+      const prompt="Analyze the following recent drone/UAV industry news for the focus: "+focus+". Depth: "+depth+". Only use the supplied article data. Do not invent facts, amounts, dates, companies or capabilities. Return valid JSON with keys analysis (Hebrew concise synthesis), trends (array of short Hebrew strings), and relevant (array of objects with id, relevance (0-100), why (Hebrew), innovation_type (Hebrew)). Include only genuinely relevant items. Articles: "+JSON.stringify(compact);
+      try {
+        const ai=await env.AI.run("@cf/meta/llama-3.3-70b-instruct-fp8-fast",{messages:[
+          {role:"system",content:"You are an OSINT analyst specializing in the global unmanned aircraft and drone industry. Respond in Hebrew. Ground every statement strictly in the supplied articles. Distinguish confirmed reporting from inference."},
+          {role:"user",content:prompt}
+        ],response_format:{type:"json_object"},max_tokens:1800,temperature:0.2});
+        const raw=ai?.response||ai?.result||ai;
+        const parsed=typeof raw==="string"?JSON.parse(raw):raw;
+        const results=(parsed.relevant||[]).map(x=>({...candidates[Number(x.id)],relevance:x.relevance,why:x.why,innovation_type:x.innovation_type})).filter(x=>x.title);
+        return json({status:"completed",mode:"Cloudflare Workers AI",model:"Llama 3.3 70B",focus,scanned:candidates.length,analysis:parsed.analysis||"",trends:parsed.trends||[],results});
+      } catch(e) {
+        return json({error:"AI analysis failed: "+String(e).slice(0,240),scanned:candidates.length},502);
+      }
     }
     if(url.pathname.startsWith("/api/"))return json({error:"Not found"},404);
     return env.ASSETS.fetch(request);
