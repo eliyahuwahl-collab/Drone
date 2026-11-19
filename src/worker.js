@@ -61,7 +61,19 @@ function publisherCountry(source) {
   if (host.endsWith(".il") || /timesofisrael\.com|israeldefense\.co\.il/.test(host)) return "Israel";
   return source.country || null;
 }
-function categoryFor(item) {
+
+const DRONE_RELEVANCE = /\\b(drone|drones|uav|uas|u\.?a\.?v\.?|u\.?a\.?s\.?|unmanned aircraft|uncrewed aircraft|loitering munition|fpv drone|counter.?uas|c.?uas|anti.?drone|drone.?port|drone delivery|multirotor|quad.?copter|hexacopter|octocopter)\\b|רחפנ|כטב.?ם|כלי טיס בלתי מאויש|חימוש משוטט|כלי טיס אוטונומי|\\b(dji|skydio|aerovironment|xtend|parrot drones|autel robotics|wingtra|quantum systems|zipline|shield ai|edge autonomy|teal drones|idea forge|brinc drones|dedrone|draganfly|freefly systems)\\b/i;
+function isDroneRelevant(item) {
+  const title=String(item.title||"");
+  const summary=String(item.summary||"");
+  const text=title+" "+summary;
+  // Require an explicit drone/UAV connection; generic defense, AI, batteries, contracts or technology news is not enough.
+  if (!DRONE_RELEVANCE.test(text)) return false;
+  // A bare mention in a long unrelated article is insufficient: require the drone connection in the headline,
+  // or a clear drone term in the supplied summary.
+  return DRONE_RELEVANCE.test(title) || /\\b(drone|uav|uas|unmanned aircraft|uncrewed aircraft|loitering munition|counter.?uas|anti.?drone)\\b|רחפנ|כטב.?ם|כלי טיס בלתי מאויש|חימוש משוטט/i.test(summary);
+}
+\nfunction categoryFor(item) {
   const s=(item.title+" "+(item.summary||"")).toLowerCase();
   const rules=[
     ["Counter-UAS & הגנה נגד רחפנים",/counter.?uas|anti.?drone|counter.?drone|c-uas|drone detection|interceptor|יירוט רחפנים|נגד רחפנים|שיבוש רחפנים/],
@@ -171,7 +183,7 @@ async function readTable(base,key,table,config) {
   const r=await fetch(u,{headers:{apikey:key,authorization:"Bearer "+key,accept:"application/json"}});
   if(!r.ok)return {data:[],error:"Supabase HTTP "+r.status};
   const rows=await r.json();
-  return {data:Array.isArray(rows)?rows.map(x=>Object.fromEntries(config.fields.map(k=>[k,x[k]??null]))):[],error:null};
+  const filtered=table==="articles" ? rows.filter(isDroneRelevant) : rows;\n  return {data:Array.isArray(filtered)?filtered.map(x=>Object.fromEntries(config.fields.map(k=>[k,x[k]??null]))):[],error:null};
 }
 let lastManualRun=0, manualRun=null;
 export default {
