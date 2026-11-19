@@ -35,7 +35,7 @@ const decodeXml = value => String(value||"").replace(/<!\[CDATA\[([\s\S]*?)\]\]>
   .replace(/&#x([\da-f]+);/gi,(_,n)=>String.fromCodePoint(parseInt(n,16))).replace(/\s+/g," ").trim();
 function tagValue(block,names) {
   for (const name of names) {
-    const re = new RegExp(`<(?:[\\w.-]+:)?${name}\\b[^>]*>([\\s\\S]*?)<\\/(?:[\\w.-]+:)?${name}\\s*>`,"i");
+    const re = new RegExp(`<(?:[\\w.-]+:)?${name}\b[^>]*>([\\s\\S]*?)<\\/(?:[\\w.-]+:)?${name}\\s*>`,"i");
     const match=block.match(re); if(match) return decodeXml(match[1]);
   }
   return "";
@@ -62,7 +62,7 @@ function publisherCountry(source) {
   return source.country || null;
 }
 
-const DRONE_RELEVANCE = /\\b(drone|drones|uav|uas|u\.?a\.?v\.?|u\.?a\.?s\.?|unmanned aircraft|uncrewed aircraft|loitering munition|fpv drone|counter.?uas|c.?uas|anti.?drone|drone.?port|drone delivery|multirotor|quad.?copter|hexacopter|octocopter)\\b|רחפנ|כטב.?ם|כלי טיס בלתי מאויש|חימוש משוטט|כלי טיס אוטונומי|\\b(dji|skydio|aerovironment|xtend|parrot drones|autel robotics|wingtra|quantum systems|zipline|shield ai|edge autonomy|teal drones|idea forge|brinc drones|dedrone|draganfly|freefly systems)\\b/i;
+const DRONE_RELEVANCE = /\b(drone|drones|uav|uas|u\.?a\.?v\.?|u\.?a\.?s\.?|unmanned aircraft|uncrewed aircraft|loitering munition|fpv drone|counter.?uas|c.?uas|anti.?drone|drone.?port|drone delivery|multirotor|quad.?copter|hexacopter|octocopter)\b|רחפנ|כטב.?ם|כלי טיס בלתי מאויש|חימוש משוטט|כלי טיס אוטונומי|\b(dji|skydio|aerovironment|xtend|parrot drones|autel robotics|wingtra|quantum systems|zipline|shield ai|edge autonomy|teal drones|idea forge|brinc drones|dedrone|draganfly|freefly systems)\b/i;
 function isDroneRelevant(item) {
   const title=String(item.title||"");
   const summary=String(item.summary||"");
@@ -71,9 +71,10 @@ function isDroneRelevant(item) {
   if (!DRONE_RELEVANCE.test(text)) return false;
   // A bare mention in a long unrelated article is insufficient: require the drone connection in the headline,
   // or a clear drone term in the supplied summary.
-  return DRONE_RELEVANCE.test(title) || /\\b(drone|uav|uas|unmanned aircraft|uncrewed aircraft|loitering munition|counter.?uas|anti.?drone)\\b|רחפנ|כטב.?ם|כלי טיס בלתי מאויש|חימוש משוטט/i.test(summary);
+  return DRONE_RELEVANCE.test(title) || /\b(drone|uav|uas|unmanned aircraft|uncrewed aircraft|loitering munition|counter.?uas|anti.?drone)\b|רחפנ|כטב.?ם|כלי טיס בלתי מאויש|חימוש משוטט/i.test(summary);
 }
-\nfunction categoryFor(item) {
+
+function categoryFor(item) {
   const s=(item.title+" "+(item.summary||"")).toLowerCase();
   const rules=[
     ["Counter-UAS & הגנה נגד רחפנים",/counter.?uas|anti.?drone|counter.?drone|c-uas|drone detection|interceptor|יירוט רחפנים|נגד רחפנים|שיבוש רחפנים/],
@@ -184,7 +185,8 @@ async function readTable(base,key,table,config) {
   const r=await fetch(u,{headers:{apikey:key,authorization:"Bearer "+key,accept:"application/json"}});
   if(!r.ok)return {data:[],error:"Supabase HTTP "+r.status};
   const rows=await r.json();
-  const filtered=table==="articles" ? rows.filter(isDroneRelevant) : rows;\n  return {data:Array.isArray(filtered)?filtered.map(x=>Object.fromEntries(config.fields.map(k=>[k,x[k]??null]))):[],error:null};
+  const filtered=table==="articles" ? rows.filter(isDroneRelevant) : rows;
+  return {data:Array.isArray(filtered)?filtered.map(x=>Object.fromEntries(config.fields.map(k=>[k,x[k]??null]))):[],error:null};
 }
 let lastManualRun=0, manualRun=null;
 export default {
