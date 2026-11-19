@@ -159,6 +159,7 @@ async function ingestSources(env) {
         report.feeds_found++;
         const items=parseFeed(feed.xml,feed.url);
         for(const item of items) {
+          if(!isDroneRelevant(item)){report.articles_skipped_irrelevant=(report.articles_skipped_irrelevant||0)+1;continue}
           if(!item.published_at){report.articles_skipped_undated++;continue}
           if(!withinWeek(item.published_at)){report.articles_skipped_old++;continue}
           if(await exists(base,key,"articles","url",item.url)) continue;
